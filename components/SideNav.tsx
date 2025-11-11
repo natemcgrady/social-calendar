@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Animated } from "react-native";
 import {
   Sidebar,
   SidebarHeader,
@@ -15,13 +15,18 @@ import ThemeToggle from "./ThemeToggle";
 type SideNavProps = {
   isOpen: boolean;
   closeSidebar: () => void;
+  dragTranslateX?: Animated.Value;
 };
 
-const SideNav = ({ isOpen, closeSidebar }: SideNavProps) => {
+const SideNav = ({ isOpen, closeSidebar, dragTranslateX }: SideNavProps) => {
   const { theme } = useTheme();
 
   return (
-    <Sidebar open={isOpen}>
+    <Sidebar
+      open={isOpen}
+      onClose={closeSidebar}
+      dragTranslateX={dragTranslateX}
+    >
       <SidebarHeader>
         <View style={styles.headerRow}>
           <Avatar size="xl">
