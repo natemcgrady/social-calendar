@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import { Theme } from "../constants/theme";
 import { useTheme } from "../contexts/ThemeContext";
 

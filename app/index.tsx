@@ -7,7 +7,7 @@ import { FloatingActionButton } from "../components/FloatingActionButton";
 import { CreateCalendarModal } from "../components/CreateCalendarModal";
 import { useTheme } from "../contexts/ThemeContext";
 import { Theme } from "../constants/theme";
-import AppHeader from "../components/app-header";
+import AppHeader from "../components/AppHeader";
 
 interface Calendar {
   id: number;
