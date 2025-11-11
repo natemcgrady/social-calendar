@@ -1,10 +1,11 @@
 import React from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Calendar from "../../components/Calendar";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "../../components/Button";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // Mock data - this would be fetched from DB based on calendar ID
 const calendarEvents: Record<
@@ -63,24 +64,44 @@ const calendarTitles: Record<number, string> = {
 export default function CalendarDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { theme } = useTheme();
   const calendarId = parseInt(id || "1", 10);
   const events = calendarEvents[calendarId] || [];
   const calendarTitle = calendarTitles[calendarId] || "Calendar";
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View
+        style={[
+          styles.header,
+          {
+            borderBottomColor: theme.colors.border,
+          },
+        ]}
       >
         <Button
           variant="ghost"
           size="icon"
-          onPress={() => router.back()}
+          onPress={() => router.push("/")}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={20} color="#000" />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={theme.colors.foreground}
+          />
         </Button>
+        <Text style={[styles.headerTitle, { color: theme.colors.foreground }]}>
+          {calendarTitle}
+        </Text>
+        <View style={styles.headerSpacer} />
+      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Calendar events={events} />
       </ScrollView>
     </SafeAreaView>
@@ -90,15 +111,29 @@ export default function CalendarDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  headerSpacer: {
+    width: 40,
   },
   scrollContent: {
     flexGrow: 1,
     padding: 16,
     alignItems: "center",
-  },
-  backButton: {
-    alignSelf: "flex-start",
-    marginBottom: 16,
   },
 });

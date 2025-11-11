@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Card, CardContent, CardFooter } from "./Card";
 import { Button } from "./Button";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../contexts/ThemeContext";
 
 export interface Event {
   title: string;
@@ -23,6 +24,7 @@ function formatDateRange(from: Date, to: Date): string {
 }
 
 export default function Calendar({ events = [] }: CalendarProps) {
+  const { theme } = useTheme();
   const today = format(new Date(), "yyyy-MM-dd");
   const [date, setDate] = React.useState<string>(today);
 
@@ -47,23 +49,23 @@ export default function Calendar({ events = [] }: CalendarProps) {
           markedDates={{
             [date]: {
               selected: true,
-              selectedColor: "#000",
-              selectedTextColor: "#fff",
+              selectedColor: theme.colors.primary,
+              selectedTextColor: theme.colors.primaryForeground,
             },
           }}
           theme={{
             backgroundColor: "transparent",
             calendarBackground: "transparent",
-            textSectionTitleColor: "#666",
-            selectedDayBackgroundColor: "#000",
-            selectedDayTextColor: "#fff",
-            todayTextColor: "#000",
-            dayTextColor: "#000",
-            textDisabledColor: "#d3d3d3",
-            dotColor: "#000",
-            selectedDotColor: "#fff",
-            arrowColor: "#000",
-            monthTextColor: "#000",
+            textSectionTitleColor: theme.colors.mutedForeground,
+            selectedDayBackgroundColor: theme.colors.primary,
+            selectedDayTextColor: theme.colors.primaryForeground,
+            todayTextColor: theme.colors.primary,
+            dayTextColor: theme.colors.foreground,
+            textDisabledColor: theme.colors.mutedForeground,
+            dotColor: theme.colors.primary,
+            selectedDotColor: theme.colors.primaryForeground,
+            arrowColor: theme.colors.foreground,
+            monthTextColor: theme.colors.foreground,
             textDayFontWeight: "400",
             textMonthFontWeight: "600",
             textDayHeaderFontWeight: "500",
@@ -75,7 +77,7 @@ export default function Calendar({ events = [] }: CalendarProps) {
       </CardContent>
       <CardFooter style={styles.cardFooter}>
         <View style={styles.headerRow}>
-          <Text style={styles.dateText}>
+          <Text style={[styles.dateText, { color: theme.colors.foreground }]}>
             {selectedDate.toLocaleDateString("en-US", {
               day: "numeric",
               month: "long",
@@ -91,17 +93,38 @@ export default function Calendar({ events = [] }: CalendarProps) {
             }}
             style={styles.addButton}
           >
-            <Ionicons name="add" size={16} color="#000" />
+            <Ionicons
+              name="add"
+              size={16}
+              color={theme.colors.foreground}
+            />
           </Button>
         </View>
         <ScrollView style={styles.eventsContainer}>
           {dayEvents.length > 0 ? (
             dayEvents.map((event) => (
-              <View key={event.title} style={styles.eventItem}>
-                <View style={styles.eventIndicator} />
+              <View
+                key={event.title}
+                style={[
+                  styles.eventItem,
+                  { backgroundColor: theme.colors.muted },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.eventIndicator,
+                    { backgroundColor: theme.colors.primary },
+                  ]}
+                />
                 <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>{event.title}</Text>
-                  <Text style={styles.eventTime}>
+                  <Text
+                    style={[styles.eventTitle, { color: theme.colors.foreground }]}
+                  >
+                    {event.title}
+                  </Text>
+                  <Text
+                    style={[styles.eventTime, { color: theme.colors.mutedForeground }]}
+                  >
                     {formatDateRange(
                       new Date(event.from),
                       new Date(event.to)
@@ -111,7 +134,11 @@ export default function Calendar({ events = [] }: CalendarProps) {
               </View>
             ))
           ) : (
-            <Text style={styles.noEventsText}>No events for this day</Text>
+            <Text
+              style={[styles.noEventsText, { color: theme.colors.mutedForeground }]}
+            >
+              No events for this day
+            </Text>
           )}
         </ScrollView>
       </CardFooter>
@@ -144,7 +171,6 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#000",
   },
   addButton: {
     width: 24,
@@ -156,7 +182,6 @@ const styles = StyleSheet.create({
   },
   eventItem: {
     flexDirection: "row",
-    backgroundColor: "#f5f5f5",
     borderRadius: 6,
     padding: 8,
     paddingLeft: 24,
@@ -169,7 +194,6 @@ const styles = StyleSheet.create({
     top: 8,
     bottom: 8,
     width: 3,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
     borderRadius: 2,
   },
   eventContent: {
@@ -178,16 +202,13 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#000",
     marginBottom: 4,
   },
   eventTime: {
     fontSize: 12,
-    color: "#666",
   },
   noEventsText: {
     fontSize: 14,
-    color: "#999",
     textAlign: "center",
     paddingVertical: 16,
   },
