@@ -2,13 +2,12 @@ import React, { useState, useMemo } from "react";
 import { StyleSheet, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import CalendarCard from "../components/CalendarCard";
 import { FloatingActionButton } from "../components/FloatingActionButton";
 import { CreateCalendarModal } from "../components/CreateCalendarModal";
 import { useTheme } from "../contexts/ThemeContext";
-import { Button } from "../components/ui/button";
 import { Theme } from "../constants/theme";
+import AppHeader from "../components/app-header";
 
 interface Calendar {
   id: number;
@@ -17,15 +16,11 @@ interface Calendar {
 
 export default function Home() {
   const router = useRouter();
-  const { theme, colorScheme, setColorScheme } = useTheme();
+  const { theme } = useTheme();
   const [calendars, setCalendars] = useState<Calendar[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const styles = useMemo(() => createStyles(theme), [theme]);
-
-  const toggleTheme = () => {
-    setColorScheme(colorScheme === "light" ? "dark" : "light");
-  };
 
   const handleCreateCalendar = (name: string) => {
     const newCalendar: Calendar = {
@@ -41,21 +36,7 @@ export default function Home() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>My Calendars</Text>
-          <Button
-            variant="ghost"
-            size="icon"
-            style={styles.themeButton}
-            onPress={toggleTheme}
-          >
-            <Ionicons
-              name={colorScheme === "light" ? "moon" : "sunny"}
-              size={22}
-              color={theme.colors.foreground}
-            />
-          </Button>
-        </View>
+        <AppHeader />
         {calendars.length > 0 ? (
           calendars.map((calendar) => (
             <CalendarCard
