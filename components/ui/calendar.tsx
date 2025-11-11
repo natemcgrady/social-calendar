@@ -28,7 +28,13 @@ export default function Calendar({ events = [] }: CalendarProps) {
   const today = format(new Date(), "yyyy-MM-dd");
   const [date, setDate] = React.useState<string>(today);
 
-  const selectedDate = date ? new Date(date) : new Date();
+  // Parse date string as local date to avoid timezone issues
+  const selectedDate = date
+    ? (() => {
+        const [year, month, day] = date.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      })()
+    : new Date();
 
   // Filter events for the selected date
   const dayEvents = events.filter((event) => {
