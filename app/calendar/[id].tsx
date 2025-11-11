@@ -84,7 +84,7 @@ export default function CalendarDetail() {
         <Button
           variant="ghost"
           size="icon"
-          onPress={() => router.push("/")}
+          onPress={() => router.back()}
           style={styles.backButton}
         >
           <Ionicons
