@@ -4,10 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CalendarCard from "../components/CalendarCard";
-import { Button } from "../components/Button";
 import { FloatingActionButton } from "../components/FloatingActionButton";
 import { CreateCalendarModal } from "../components/CreateCalendarModal";
 import { useTheme } from "../contexts/ThemeContext";
+import { Button } from "../components/ui/button";
 
 interface Calendar {
   id: number;
@@ -60,8 +60,8 @@ export default function Home() {
           <Button
             variant="ghost"
             size="icon"
-            onPress={toggleTheme}
             style={styles.themeButton}
+            onPress={toggleTheme}
           >
             <Ionicons
               name={colorScheme === "light" ? "moon" : "sunny"}

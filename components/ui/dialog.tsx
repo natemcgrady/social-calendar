@@ -11,9 +11,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { Button } from "./Button";
+import { Button } from "../ui/button";
 
 interface DialogProps {
   open: boolean;
@@ -49,7 +49,6 @@ interface DialogOverlayProps {
 }
 
 function DialogOverlay({ style, onPress }: DialogOverlayProps) {
-  const { theme } = useTheme();
   return (
     <Pressable
       style={[styles.overlay, { backgroundColor: "rgba(0, 0, 0, 0.5)" }, style]}
@@ -103,7 +102,7 @@ function DialogContent({
               {showCloseButton && (
                 <Button
                   variant="ghost"
-                  size="icon-sm"
+                  size="sm"
                   onPress={onClose}
                   style={styles.closeButton}
                 >

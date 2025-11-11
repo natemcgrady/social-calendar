@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Text, TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
-import { Button } from "./Button";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
-} from "./Dialog";
+} from "../components/ui/dialog";
+import { Button } from "../components/ui/button";
 
 interface CreateCalendarModalProps {
   visible: boolean;
@@ -42,6 +44,9 @@ export function CreateCalendarModal({
       <DialogContent onClose={handleClose}>
         <DialogHeader>
           <DialogTitle>Create New Calendar</DialogTitle>
+          <DialogDescription>
+            Enter a name for your new calendar to get started.
+          </DialogDescription>
         </DialogHeader>
         <TextInput
           style={[

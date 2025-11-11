@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Calendar as RNCalendar, DateData } from "react-native-calendars";
 import { format } from "date-fns";
-import { Card, CardContent, CardFooter } from "./Card";
-import { Button } from "./Button";
+import { Card, CardContent, CardFooter } from "./card";
+import { Button } from "./button";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export interface Event {
   title: string;
@@ -93,11 +93,7 @@ export default function Calendar({ events = [] }: CalendarProps) {
             }}
             style={styles.addButton}
           >
-            <Ionicons
-              name="add"
-              size={16}
-              color={theme.colors.foreground}
-            />
+            <Ionicons name="add" size={16} color={theme.colors.foreground} />
           </Button>
         </View>
         <ScrollView style={styles.eventsContainer}>
@@ -118,24 +114,30 @@ export default function Calendar({ events = [] }: CalendarProps) {
                 />
                 <View style={styles.eventContent}>
                   <Text
-                    style={[styles.eventTitle, { color: theme.colors.foreground }]}
+                    style={[
+                      styles.eventTitle,
+                      { color: theme.colors.foreground },
+                    ]}
                   >
                     {event.title}
                   </Text>
                   <Text
-                    style={[styles.eventTime, { color: theme.colors.mutedForeground }]}
+                    style={[
+                      styles.eventTime,
+                      { color: theme.colors.mutedForeground },
+                    ]}
                   >
-                    {formatDateRange(
-                      new Date(event.from),
-                      new Date(event.to)
-                    )}
+                    {formatDateRange(new Date(event.from), new Date(event.to))}
                   </Text>
                 </View>
               </View>
             ))
           ) : (
             <Text
-              style={[styles.noEventsText, { color: theme.colors.mutedForeground }]}
+              style={[
+                styles.noEventsText,
+                { color: theme.colors.mutedForeground },
+              ]}
             >
               No events for this day
             </Text>
@@ -213,4 +215,3 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
 });
-

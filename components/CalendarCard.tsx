@@ -1,6 +1,12 @@
 import React from "react";
-import { Card, CardContent } from "./Card";
-import { Text, StyleSheet, StyleProp, ViewStyle, Pressable } from "react-native";
+import { Card, CardContent } from "./ui/card";
+import {
+  Text,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  Pressable,
+} from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 
 interface CalendarCardProps {
@@ -11,9 +17,12 @@ interface CalendarCardProps {
 
 const CalendarCard = ({ title, style, onPress }: CalendarCardProps) => {
   const { theme } = useTheme();
-  
+
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [pressed && styles.pressed]}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [pressed && styles.pressed]}
+    >
       <Card style={style as ViewStyle}>
         <CardContent>
           <Text style={[styles.title, { color: theme.colors.cardForeground }]}>

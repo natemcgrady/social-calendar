@@ -2,10 +2,10 @@ import React from "react";
 import { StyleSheet, ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import Calendar from "../../components/Calendar";
 import { Ionicons } from "@expo/vector-icons";
-import { Button } from "../../components/Button";
+import { Button } from "../../components/ui/button";
 import { useTheme } from "../../contexts/ThemeContext";
+import Calendar from "../../components/ui/calendar";
 
 // Mock data - this would be fetched from DB based on calendar ID
 const calendarEvents: Record<
