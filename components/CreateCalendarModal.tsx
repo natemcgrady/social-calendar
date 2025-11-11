@@ -51,10 +51,11 @@ export function CreateCalendarModal({
       <Pressable style={styles.overlay} onPress={handleClose}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardView}
+          style={styles.keyboardContainer}
         >
-          <Pressable onPress={(e) => e.stopPropagation()}>
-            <Card style={styles.modal}>
+          <View style={styles.centeredContent}>
+            <Pressable onPress={(e) => e.stopPropagation()}>
+              <Card style={styles.modal}>
               <CardContent>
                 <View style={styles.header}>
                   <Text
@@ -121,6 +122,7 @@ export function CreateCalendarModal({
               </CardContent>
             </Card>
           </Pressable>
+          </View>
         </KeyboardAvoidingView>
       </Pressable>
     </Modal>
@@ -131,13 +133,19 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
   },
-  keyboardView: {
+  keyboardContainer: {
+    flex: 1,
     width: "100%",
     maxWidth: 400,
+  },
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center",
+    width: "100%",
   },
   modal: {
     width: "100%",
