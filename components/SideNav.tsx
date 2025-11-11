@@ -9,6 +9,8 @@ import {
 import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "../components/ui/button";
 import { Ionicons } from "@expo/vector-icons";
+import { Avatar, AvatarImage } from "./ui/avatar";
+import ThemeToggle from "./ThemeToggle";
 
 type SideNavProps = {
   isOpen: boolean;
@@ -22,24 +24,21 @@ const SideNav = ({ isOpen, closeSidebar }: SideNavProps) => {
     <Sidebar open={isOpen}>
       <SidebarHeader>
         <View style={styles.headerRow}>
-          <Text
-            style={[styles.sidebarTitle, { color: theme.colors.foreground }]}
-          >
-            Menu
-          </Text>
+          <Avatar size="xl">
+            <AvatarImage source={require("../assets/avatar.png")} />
+          </Avatar>
+          <Button variant="ghost" size="icon-sm" onPress={closeSidebar}>
+            <Ionicons name="close" size={20} color={theme.colors.foreground} />
+          </Button>
         </View>
       </SidebarHeader>
       <SidebarContent>
         <Text style={[styles.sidebarText, { color: theme.colors.foreground }]}>
-          Sidebar content goes here
+          Settings
         </Text>
       </SidebarContent>
       <SidebarFooter>
-        <Text
-          style={[styles.sidebarText, { color: theme.colors.mutedForeground }]}
-        >
-          Footer content
-        </Text>
+        <ThemeToggle />
       </SidebarFooter>
     </Sidebar>
   );

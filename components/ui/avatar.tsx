@@ -9,10 +9,12 @@ import {
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 
+type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+
 interface AvatarProps {
   children?: React.ReactNode;
   style?: ViewStyle;
-  size?: number;
+  size?: AvatarSize | number;
 }
 
 interface AvatarImageProps {
@@ -26,11 +28,32 @@ interface AvatarFallbackProps {
   style?: ViewStyle;
 }
 
-function Avatar({ children, style, size = 32 }: AvatarProps) {
+function Avatar({ children, style, size = "md" }: AvatarProps) {
+  const { theme } = useTheme();
+
+  // Map size strings to pixel values based on theme spacing
+  const getSizeValue = (size: AvatarSize | number): number => {
+    if (typeof size === "number") {
+      return size;
+    }
+
+    const sizeMap: Record<AvatarSize, number> = {
+      xs: theme.spacing.xs * 4, // 16 (4x spacing.xs)
+      sm: theme.spacing["2xl"], // 24
+      md: theme.spacing["3xl"], // 32 (matches current default)
+      lg: theme.spacing["4xl"], // 40
+      xl: theme.spacing["5xl"], // 48
+      "2xl": theme.spacing["3xl"] * 2, // 64
+    };
+
+    return sizeMap[size];
+  };
+
+  const sizeValue = getSizeValue(size);
   const avatarStyle: ViewStyle = {
-    width: size,
-    height: size,
-    borderRadius: size / 2,
+    width: sizeValue,
+    height: sizeValue,
+    borderRadius: sizeValue / 2,
     overflow: "hidden",
     position: "relative",
     flexShrink: 0,
@@ -84,6 +107,8 @@ function AvatarFallback({ children, style }: AvatarFallbackProps) {
     borderRadius: 9999, // Full circle
   };
 
+  // Dynamic font size based on parent avatar size
+  // This will be calculated relative to the avatar size
   const textStyle: TextStyle = {
     color: theme.colors.mutedForeground,
     fontSize: 14,
