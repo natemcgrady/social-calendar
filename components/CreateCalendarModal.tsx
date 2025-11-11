@@ -39,6 +39,31 @@ export function CreateCalendarModal({
     onClose();
   };
 
+  const styles = StyleSheet.create({
+    input: {
+      height: 48,
+      borderRadius: 8,
+      borderWidth: 1,
+      paddingHorizontal: theme.spacing.lg, // 16pt - standard horizontal padding
+      fontSize: 16,
+      marginBottom: theme.spacing.xl, // 20pt - comfortable spacing
+    },
+    cancelButton: {
+      flex: 1,
+    },
+    createButton: {
+      flex: 1,
+    },
+    cancelButtonText: {
+      fontSize: 16,
+      fontWeight: "500",
+    },
+    createButtonText: {
+      fontSize: 16,
+      fontWeight: "500",
+    },
+  });
+
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent onClose={handleClose}>
@@ -100,28 +125,3 @@ export function CreateCalendarModal({
     </Dialog>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    height: 48,
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  cancelButton: {
-    flex: 1,
-  },
-  createButton: {
-    flex: 1,
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  createButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-});

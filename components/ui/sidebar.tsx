@@ -67,7 +67,8 @@ interface SidebarHeaderProps {
 }
 
 export function SidebarHeader({ children, style }: SidebarHeaderProps) {
-  return <View style={[styles.header, style]}>{children}</View>;
+  const { theme } = useTheme();
+  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
 }
 
 interface SidebarContentProps {
@@ -76,7 +77,8 @@ interface SidebarContentProps {
 }
 
 export function SidebarContent({ children, style }: SidebarContentProps) {
-  return <View style={[styles.content, style]}>{children}</View>;
+  const { theme } = useTheme();
+  return <View style={[{ flex: 1, padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
 }
 
 interface SidebarFooterProps {
@@ -85,7 +87,8 @@ interface SidebarFooterProps {
 }
 
 export function SidebarFooter({ children, style }: SidebarFooterProps) {
-  return <View style={[styles.footer, style]}>{children}</View>;
+  const { theme } = useTheme();
+  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
 }
 
 const styles = StyleSheet.create({
@@ -104,16 +107,6 @@ const styles = StyleSheet.create({
   },
   sidebarContent: {
     flex: 1,
-  },
-  header: {
-    padding: 16,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  footer: {
-    padding: 16,
   },
 });
 

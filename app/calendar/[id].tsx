@@ -114,8 +114,8 @@ const createStyles = (theme: Theme) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: theme.spacing.lg, // 16pt - standard horizontal padding
+      paddingVertical: theme.spacing.md, // 12pt - medium vertical padding
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
@@ -133,7 +133,7 @@ const createStyles = (theme: Theme) =>
     },
     scrollContent: {
       flexGrow: 1,
-      padding: 16,
+      padding: theme.spacing.lg, // 16pt - standard padding
       alignItems: "center",
     },
   });

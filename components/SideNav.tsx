@@ -27,9 +27,6 @@ const SideNav = ({ isOpen, closeSidebar }: SideNavProps) => {
           >
             Menu
           </Text>
-          <Button variant="ghost" size="icon-sm" onPress={closeSidebar}>
-            <Ionicons name="close" size={20} color={theme.colors.foreground} />
-          </Button>
         </View>
       </SidebarHeader>
       <SidebarContent>

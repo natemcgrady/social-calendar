@@ -79,6 +79,17 @@ export const theme = {
       lg: 6,
       xl: 10,
     },
+    spacing: {
+      xs: 4,    // 0.5x base (tight spacing)
+      sm: 8,    // 1x base (standard small spacing)
+      md: 12,   // 1.5x base (medium spacing)
+      lg: 16,   // 2x base (standard spacing, screen margins)
+      xl: 20,   // 2.5x base (comfortable spacing)
+      "2xl": 24, // 3x base (loose spacing, section gaps)
+      "3xl": 32, // 4x base (large gaps, card spacing)
+      "4xl": 40, // 5x base (extra large gaps)
+      "5xl": 48, // 6x base (maximum spacing)
+    },
   },
   dark: {
     colors: darkColors,
@@ -87,6 +98,17 @@ export const theme = {
       md: 4,
       lg: 6,
       xl: 10,
+    },
+    spacing: {
+      xs: 4,
+      sm: 8,
+      md: 12,
+      lg: 16,
+      xl: 20,
+      "2xl": 24,
+      "3xl": 32,
+      "4xl": 40,
+      "5xl": 48,
     },
   },
 } as const;

@@ -61,9 +61,9 @@ function getButtonStyles(
 
   // Size-specific styles
   const sizeConfig = {
-    default: { paddingHorizontal: 16, paddingVertical: 8, minHeight: 36 },
-    sm: { paddingHorizontal: 12, paddingVertical: 6, minHeight: 32 },
-    lg: { paddingHorizontal: 24, paddingVertical: 10, minHeight: 40 },
+    default: { paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm, minHeight: 36 }, // 16pt/8pt
+    sm: { paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.xs, minHeight: 32 }, // 12pt/4pt
+    lg: { paddingHorizontal: theme.spacing["2xl"], paddingVertical: theme.spacing.sm, minHeight: 40 }, // 24pt/8pt
     icon: { width: 36, height: 36, padding: 0, minWidth: 36, minHeight: 36 },
     "icon-sm": {
       width: 32,
