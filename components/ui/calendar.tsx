@@ -15,6 +15,8 @@ export interface Event {
 
 interface CalendarProps {
   events?: Event[];
+  onAddEventPress?: () => void;
+  onSelectedDateChange?: (date: string) => void; // YYYY-MM-DD format
 }
 
 function formatDateRange(from: Date, to: Date): string {
@@ -23,10 +25,21 @@ function formatDateRange(from: Date, to: Date): string {
   return `${fromTime} - ${toTime}`;
 }
 
-export default function Calendar({ events = [] }: CalendarProps) {
+export default function Calendar({
+  events = [],
+  onAddEventPress,
+  onSelectedDateChange,
+}: CalendarProps) {
   const { theme } = useTheme();
   const today = format(new Date(), "yyyy-MM-dd");
   const [date, setDate] = React.useState<string>(today);
+
+  // Notify parent when selected date changes
+  React.useEffect(() => {
+    if (onSelectedDateChange) {
+      onSelectedDateChange(date);
+    }
+  }, [date, onSelectedDateChange]);
 
   // Parse date string as local date to avoid timezone issues
   const selectedDate = date
@@ -118,10 +131,7 @@ export default function Calendar({ events = [] }: CalendarProps) {
           <Button
             variant="ghost"
             size="icon"
-            onPress={() => {
-              // Handle add event
-              console.log("Add event pressed");
-            }}
+            onPress={onAddEventPress}
             style={styles.addButton}
           >
             <Ionicons name="add" size={16} color={theme.colors.foreground} />

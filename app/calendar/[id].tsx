@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { StyleSheet, ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/button";
 import { useTheme } from "../../contexts/ThemeContext";
 import Calendar from "../../components/ui/calendar";
 import { Theme } from "../../constants/theme";
+import { AddEventModal } from "../../components/AddEventModal";
 
 // Mock data - this would be fetched from DB based on calendar ID
 const calendarEvents: Record<
@@ -72,9 +73,20 @@ export default function CalendarDetail() {
   const router = useRouter();
   const { theme } = useTheme();
   const calendarId = parseInt(id || "1", 10);
-  const events = calendarEvents[calendarId] || [];
+  const initialEvents = calendarEvents[calendarId] || [];
+  const [events, setEvents] = useState(initialEvents);
+  const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const calendarTitle = calendarTitles[calendarId] || "Calendar";
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const handleAddEvent = (event: {
+    title: string;
+    from: string;
+    to: string;
+  }) => {
+    setEvents((prevEvents) => [...prevEvents, event]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -92,14 +104,31 @@ export default function CalendarDetail() {
           />
         </Button>
         <Text style={styles.headerTitle}>{calendarTitle}</Text>
-        <View style={styles.headerSpacer} />
+        <Button
+          variant="ghost"
+          size="icon"
+          onPress={() => setIsAddEventModalVisible(true)}
+          style={styles.addButton}
+        >
+          <Ionicons name="add" size={24} color={theme.colors.foreground} />
+        </Button>
       </View>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Calendar events={events} />
+        <Calendar
+          events={events}
+          onAddEventPress={() => setIsAddEventModalVisible(true)}
+          onSelectedDateChange={setSelectedDate}
+        />
       </ScrollView>
+      <AddEventModal
+        visible={isAddEventModalVisible}
+        onClose={() => setIsAddEventModalVisible(false)}
+        onAdd={handleAddEvent}
+        initialDate={selectedDate}
+      />
     </SafeAreaView>
   );
 }
@@ -128,8 +157,9 @@ const createStyles = (theme: Theme) =>
       fontWeight: "600",
       color: theme.colors.foreground,
     },
-    headerSpacer: {
+    addButton: {
       width: 40,
+      height: 40,
     },
     scrollContent: {
       flexGrow: 1,
