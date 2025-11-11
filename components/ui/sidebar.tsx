@@ -39,9 +39,6 @@ export function Sidebar({ open, children, side = "left" }: SidebarProps) {
         styles.sidebar,
         {
           backgroundColor: theme.colors.sidebar || theme.colors.card,
-          borderRightWidth: side === "left" ? 1 : 0,
-          borderLeftWidth: side === "right" ? 1 : 0,
-          borderColor: theme.colors.sidebarBorder || theme.colors.border,
           [side]: 0,
           transform: [{ translateX: slideAnim }],
         },
