@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { StyleSheet, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -8,6 +8,7 @@ import { FloatingActionButton } from "../components/FloatingActionButton";
 import { CreateCalendarModal } from "../components/CreateCalendarModal";
 import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "../components/ui/button";
+import { Theme } from "../constants/theme";
 
 interface Calendar {
   id: number;
@@ -17,21 +18,10 @@ interface Calendar {
 export default function Home() {
   const router = useRouter();
   const { theme, colorScheme, setColorScheme } = useTheme();
-  const [calendars, setCalendars] = useState<Calendar[]>([
-    {
-      id: 1,
-      title: "Family",
-    },
-    {
-      id: 2,
-      title: "Friends",
-    },
-    {
-      id: 3,
-      title: "Work",
-    },
-  ]);
+  const [calendars, setCalendars] = useState<Calendar[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const toggleTheme = () => {
     setColorScheme(colorScheme === "light" ? "dark" : "light");
@@ -46,17 +36,13 @@ export default function Home() {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.foreground }]}>
-            My Calendars
-          </Text>
+          <Text style={styles.title}>My Calendars</Text>
           <Button
             variant="ghost"
             size="icon"
@@ -70,14 +56,20 @@ export default function Home() {
             />
           </Button>
         </View>
-        {calendars.map((calendar) => (
-          <CalendarCard
-            key={calendar.id}
-            style={styles.calendarCard}
-            title={calendar.title}
-            onPress={() => router.push(`/calendar/${calendar.id}`)}
-          />
-        ))}
+        {calendars.length > 0 ? (
+          calendars.map((calendar) => (
+            <CalendarCard
+              key={calendar.id}
+              style={styles.calendarCard}
+              title={calendar.title}
+              onPress={() => router.push(`/calendar/${calendar.id}`)}
+            />
+          ))
+        ) : (
+          <Text style={styles.noCalendarsText}>
+            Create a new calendar to get started!
+          </Text>
+        )}
       </ScrollView>
       <FloatingActionButton
         onPress={() => setIsModalVisible(true)}
@@ -92,35 +84,44 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    gap: 16,
-    padding: 16,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-  },
-  themeButton: {
-    marginLeft: 8,
-  },
-  calendarCard: {
-    width: "100%",
-  },
-  fab: {
-    position: "absolute",
-    bottom: 24,
-    right: 24,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      gap: 16,
+      padding: 16,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: "bold",
+      flex: 1,
+      color: theme.colors.foreground,
+    },
+    themeButton: {
+      marginLeft: 8,
+    },
+    calendarCard: {
+      width: "100%",
+    },
+    fab: {
+      position: "absolute",
+      bottom: 24,
+      right: 24,
+    },
+    noCalendarsText: {
+      fontSize: 16,
+      textAlign: "center",
+      padding: 16,
+      color: theme.colors.foreground,
+    },
+  });
