@@ -7,8 +7,6 @@ import {
   SidebarFooter,
 } from "../components/ui/sidebar";
 import { useTheme } from "../contexts/ThemeContext";
-import { Button } from "../components/ui/button";
-import { Ionicons } from "@expo/vector-icons";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import ThemeToggle from "./ThemeToggle";
 
@@ -32,9 +30,6 @@ const SideNav = ({ isOpen, closeSidebar, dragTranslateX }: SideNavProps) => {
           <Avatar size="xl">
             <AvatarImage source={require("../assets/avatar.png")} />
           </Avatar>
-          <Button variant="ghost" size="icon-sm" onPress={closeSidebar}>
-            <Ionicons name="close" size={20} color={theme.colors.foreground} />
-          </Button>
         </View>
       </SidebarHeader>
       <SidebarContent>
