@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
+  StyleProp,
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -13,7 +14,7 @@ import type { Theme } from "../../constants/theme";
 interface ButtonProps extends VariantProps<typeof buttonVariants> {
   children?: React.ReactNode;
   onPress?: () => void;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   title?: string;
   disabled?: boolean;
 }
@@ -168,7 +169,7 @@ export function Button({
   const finalButtonStyle: ViewStyle[] = [
     baseButtonStyle,
     ...(disabled ? [styles.disabled] : []),
-    ...(style ? [style] : []),
+    ...(style ? (Array.isArray(style) ? style : [style]) : []),
   ];
 
   const finalTextStyle: TextStyle[] = [

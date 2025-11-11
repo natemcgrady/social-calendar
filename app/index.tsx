@@ -77,8 +77,8 @@ const createStyles = (theme: Theme) =>
     },
     scrollContent: {
       flexGrow: 1,
-      gap: theme.spacing.lg, // 16pt - standard spacing between items
-      padding: theme.spacing.lg, // 16pt - screen edge margin
+      gap: theme.spacing.lg,
+      padding: theme.spacing.lg,
     },
     header: {
       flexDirection: "row",
@@ -93,20 +93,20 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.foreground,
     },
     themeButton: {
-      marginLeft: theme.spacing.sm, // 8pt - small spacing
+      marginLeft: theme.spacing.sm,
     },
     calendarCard: {
       width: "100%",
     },
     fab: {
       position: "absolute",
-      bottom: theme.spacing["2xl"], // 24pt - comfortable spacing from edges
-      right: theme.spacing["2xl"], // 24pt - comfortable spacing from edges
+      bottom: theme.spacing["2xl"],
+      right: theme.spacing["2xl"],
     },
     noCalendarsText: {
       fontSize: 16,
       textAlign: "center",
-      padding: theme.spacing.lg, // 16pt - standard padding
+      padding: theme.spacing.lg,
       color: theme.colors.foreground,
     },
   });

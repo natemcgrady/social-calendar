@@ -19,11 +19,7 @@ interface SidebarProps {
   side?: "left" | "right";
 }
 
-export function Sidebar({
-  open,
-  children,
-  side = "left",
-}: SidebarProps) {
+export function Sidebar({ open, children, side = "left" }: SidebarProps) {
   const { theme } = useTheme();
   const slideAnim = useRef(
     new Animated.Value(side === "left" ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH)
@@ -31,7 +27,7 @@ export function Sidebar({
 
   useEffect(() => {
     Animated.timing(slideAnim, {
-      toValue: open ? 0 : (side === "left" ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH),
+      toValue: open ? 0 : side === "left" ? -SIDEBAR_WIDTH : SIDEBAR_WIDTH,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -52,7 +48,11 @@ export function Sidebar({
       ]}
     >
       <SafeAreaView
-        edges={side === "left" ? ["top", "bottom", "left"] : ["top", "bottom", "right"]}
+        edges={
+          side === "left"
+            ? ["top", "bottom", "left"]
+            : ["top", "bottom", "right"]
+        }
         style={styles.sidebarContent}
       >
         {children}
@@ -68,7 +68,7 @@ interface SidebarHeaderProps {
 
 export function SidebarHeader({ children, style }: SidebarHeaderProps) {
   const { theme } = useTheme();
-  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
+  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>;
 }
 
 interface SidebarContentProps {
@@ -78,7 +78,11 @@ interface SidebarContentProps {
 
 export function SidebarContent({ children, style }: SidebarContentProps) {
   const { theme } = useTheme();
-  return <View style={[{ flex: 1, padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
+  return (
+    <View style={[{ flex: 1, padding: theme.spacing.lg }, style]}>
+      {children}
+    </View>
+  );
 }
 
 interface SidebarFooterProps {
@@ -88,7 +92,7 @@ interface SidebarFooterProps {
 
 export function SidebarFooter({ children, style }: SidebarFooterProps) {
   const { theme } = useTheme();
-  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
+  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
@@ -109,4 +113,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-

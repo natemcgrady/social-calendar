@@ -44,9 +44,9 @@ export function CreateCalendarModal({
       height: 48,
       borderRadius: 8,
       borderWidth: 1,
-      paddingHorizontal: theme.spacing.lg, // 16pt - standard horizontal padding
+      paddingHorizontal: theme.spacing.lg,
       fontSize: 16,
-      marginBottom: theme.spacing.xl, // 20pt - comfortable spacing
+      marginBottom: theme.spacing.xl,
     },
     cancelButton: {
       flex: 1,

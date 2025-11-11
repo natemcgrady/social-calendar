@@ -79,10 +79,15 @@ function DialogContent({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardContainer}
       >
-        <View style={[styles.centeredContent, {
-          paddingHorizontal: theme.spacing.lg, // 16pt - standard horizontal padding
-          paddingVertical: theme.spacing.xl, // 20pt - comfortable vertical padding
-        }]}>
+        <View
+          style={[
+            styles.centeredContent,
+            {
+              paddingHorizontal: theme.spacing.lg,
+              paddingVertical: theme.spacing.xl,
+            },
+          ]}
+        >
           <Pressable onPress={(e) => e.stopPropagation()}>
             <View
               style={[
@@ -92,7 +97,7 @@ function DialogContent({
                   borderRadius: theme.radius.lg,
                   borderWidth: 1,
                   borderColor: theme.colors.border,
-                  padding: theme.spacing["2xl"], // 24pt - comfortable padding for dialog content
+                  padding: theme.spacing["2xl"],
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.25,
@@ -108,10 +113,13 @@ function DialogContent({
                   variant="ghost"
                   size="sm"
                   onPress={onClose}
-                  style={[styles.closeButton, {
-                    top: theme.spacing.lg, // 16pt - standard spacing
-                    right: theme.spacing.lg, // 16pt - standard spacing
-                  }]}
+                  style={[
+                    styles.closeButton,
+                    {
+                      top: theme.spacing.lg,
+                      right: theme.spacing.lg,
+                    },
+                  ]}
                 >
                   <Ionicons
                     name="close"
@@ -135,7 +143,11 @@ interface DialogHeaderProps {
 
 function DialogHeader({ children, style }: DialogHeaderProps) {
   const { theme } = useTheme();
-  return <View style={[{ marginBottom: theme.spacing.lg }, styles.header, style]}>{children}</View>; // 16pt - standard spacing
+  return (
+    <View style={[{ marginBottom: theme.spacing.lg }, styles.header, style]}>
+      {children}
+    </View>
+  );
 }
 
 interface DialogFooterProps {
@@ -145,10 +157,20 @@ interface DialogFooterProps {
 
 function DialogFooter({ children, style }: DialogFooterProps) {
   const { theme } = useTheme();
-  return <View style={[{
-    gap: theme.spacing.md, // 12pt - medium spacing between footer buttons
-    marginTop: theme.spacing.lg, // 16pt - standard spacing
-  }, styles.footer, style]}>{children}</View>;
+  return (
+    <View
+      style={[
+        {
+          gap: theme.spacing.md,
+          marginTop: theme.spacing.lg,
+        },
+        styles.footer,
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
 
 interface DialogTitleProps {
@@ -178,7 +200,7 @@ function DialogDescription({ children, style }: DialogDescriptionProps) {
         styles.description,
         {
           color: theme.colors.mutedForeground,
-          marginTop: theme.spacing.xs, // 4pt - tight spacing for description
+          marginTop: theme.spacing.xs,
         },
         style,
       ]}
@@ -224,8 +246,7 @@ const styles = StyleSheet.create({
   closeButton: {
     position: "absolute",
   },
-  header: {
-  },
+  header: {},
   footer: {
     flexDirection: "row",
     justifyContent: "flex-end",

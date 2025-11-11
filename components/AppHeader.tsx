@@ -15,7 +15,7 @@ const AppHeader = () => {
     () =>
       StyleSheet.create({
         header: {
-          gap: theme.spacing.lg, // 16pt - standard spacing between header elements
+          gap: theme.spacing.lg,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",

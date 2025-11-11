@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, Pressable } from "react-native";
 import { Stack } from "expo-router";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { SidebarProvider, useSidebar } from "../contexts/SidebarContext";
@@ -11,14 +11,22 @@ function SidebarLayout({ children }: { children: React.ReactNode }) {
   const { isOpen, closeSidebar } = useSidebar();
   const { theme } = useTheme();
   const contentTranslateX = React.useRef(new Animated.Value(0)).current;
+  const overlayOpacity = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
-    Animated.timing(contentTranslateX, {
-      toValue: isOpen ? SIDEBAR_WIDTH : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [isOpen, contentTranslateX]);
+    Animated.parallel([
+      Animated.timing(contentTranslateX, {
+        toValue: isOpen ? SIDEBAR_WIDTH : 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(overlayOpacity, {
+        toValue: isOpen ? 0.5 : 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [isOpen, contentTranslateX, overlayOpacity]);
 
   return (
     <View style={styles.container}>
@@ -31,9 +39,24 @@ function SidebarLayout({ children }: { children: React.ReactNode }) {
             transform: [{ translateX: contentTranslateX }],
           },
         ]}
+        pointerEvents={isOpen ? "none" : "auto"}
       >
         {children}
       </Animated.View>
+      <Pressable
+        style={StyleSheet.absoluteFill}
+        onPress={isOpen ? closeSidebar : undefined}
+        pointerEvents={isOpen ? "auto" : "none"}
+      >
+        <Animated.View
+          style={[
+            styles.overlay,
+            {
+              opacity: overlayOpacity,
+            },
+          ]}
+        />
+      </Pressable>
     </View>
   );
 }
@@ -63,5 +86,14 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#000000",
+    zIndex: 999,
   },
 });

@@ -38,12 +38,12 @@ function Avatar({ children, style, size = "md" }: AvatarProps) {
     }
 
     const sizeMap: Record<AvatarSize, number> = {
-      xs: theme.spacing.xs * 4, // 16 (4x spacing.xs)
-      sm: theme.spacing["2xl"], // 24
-      md: theme.spacing["3xl"], // 32 (matches current default)
-      lg: theme.spacing["4xl"], // 40
-      xl: theme.spacing["5xl"], // 48
-      "2xl": theme.spacing["3xl"] * 2, // 64
+      xs: theme.spacing.xs * 4,
+      sm: theme.spacing["2xl"],
+      md: theme.spacing["3xl"],
+      lg: theme.spacing["4xl"],
+      xl: theme.spacing["5xl"],
+      "2xl": theme.spacing["3xl"] * 2,
     };
 
     return sizeMap[size];
@@ -104,11 +104,9 @@ function AvatarFallback({ children, style }: AvatarFallbackProps) {
     backgroundColor: theme.colors.muted,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 9999, // Full circle
+    borderRadius: 9999,
   };
 
-  // Dynamic font size based on parent avatar size
-  // This will be calculated relative to the avatar size
   const textStyle: TextStyle = {
     color: theme.colors.mutedForeground,
     fontSize: 14,

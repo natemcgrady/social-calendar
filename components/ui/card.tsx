@@ -41,7 +41,7 @@ interface CardContentProps {
 
 export function CardContent({ children, style }: CardContentProps) {
   const { theme } = useTheme();
-  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>; // 16pt - standard padding
+  return <View style={[{ padding: theme.spacing.lg }, style]}>{children}</View>;
 }
 
 interface CardFooterProps {
@@ -55,9 +55,9 @@ export function CardFooter({ children, style }: CardFooterProps) {
     <View
       style={[
         {
-          paddingTop: theme.spacing.lg, // 16pt - standard padding
-          paddingHorizontal: theme.spacing.lg, // 16pt - standard padding
-          paddingBottom: theme.spacing.lg, // 16pt - standard padding
+          paddingTop: theme.spacing.lg,
+          paddingHorizontal: theme.spacing.lg,
+          paddingBottom: theme.spacing.lg,
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
         },
@@ -69,5 +69,4 @@ export function CardFooter({ children, style }: CardFooterProps) {
   );
 }
 
-const styles = StyleSheet.create({
-});
+const styles = StyleSheet.create({});
