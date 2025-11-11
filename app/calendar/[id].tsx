@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Button } from "../../components/ui/button";
 import { useTheme } from "../../contexts/ThemeContext";
 import Calendar from "../../components/ui/calendar";
+import { Theme } from "../../constants/theme";
 
 // Mock data - this would be fetched from DB based on calendar ID
 const calendarEvents: Record<
@@ -73,19 +74,11 @@ export default function CalendarDetail() {
   const calendarId = parseInt(id || "1", 10);
   const events = calendarEvents[calendarId] || [];
   const calendarTitle = calendarTitles[calendarId] || "Calendar";
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <View
-        style={[
-          styles.header,
-          {
-            borderBottomColor: theme.colors.border,
-          },
-        ]}
-      >
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.header]}>
         <Button
           variant="ghost"
           size="icon"
@@ -98,9 +91,7 @@ export default function CalendarDetail() {
             color={theme.colors.foreground}
           />
         </Button>
-        <Text style={[styles.headerTitle, { color: theme.colors.foreground }]}>
-          {calendarTitle}
-        </Text>
+        <Text style={styles.headerTitle}>{calendarTitle}</Text>
         <View style={styles.headerSpacer} />
       </View>
       <ScrollView
@@ -113,32 +104,36 @@ export default function CalendarDetail() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 16,
-    alignItems: "center",
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: theme.colors.foreground,
+    },
+    headerSpacer: {
+      width: 40,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      padding: 16,
+      alignItems: "center",
+    },
+  });
