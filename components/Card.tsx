@@ -1,10 +1,10 @@
 import React from "react";
-import { View, StyleSheet, ViewStyle } from "react-native";
+import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 
 interface CardProps {
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Card({ children, style }: CardProps) {
@@ -36,7 +36,7 @@ export function Card({ children, style }: CardProps) {
 
 interface CardContentProps {
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function CardContent({ children, style }: CardContentProps) {
@@ -45,7 +45,7 @@ export function CardContent({ children, style }: CardContentProps) {
 
 interface CardFooterProps {
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function CardFooter({ children, style }: CardFooterProps) {

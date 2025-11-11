@@ -10,7 +10,13 @@ import { useTheme } from "../contexts/ThemeContext";
 
 interface ButtonProps {
   children?: React.ReactNode;
-  variant?: "default" | "ghost" | "outline" | "secondary" | "destructive" | "link";
+  variant?:
+    | "default"
+    | "ghost"
+    | "outline"
+    | "secondary"
+    | "destructive"
+    | "link";
   size?: "default" | "icon" | "icon-sm" | "icon-lg" | "sm" | "lg";
   onPress?: () => void;
   style?: ViewStyle;
@@ -30,12 +36,11 @@ export function Button({
   const { theme } = useTheme();
 
   const getButtonStyle = () => {
-    const baseStyle = {
+    const baseStyle: ViewStyle = {
       borderRadius: theme.radius.md,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
-      flexDirection: "row" as const,
-      gap: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
     };
 
     // Size-specific styles
@@ -59,7 +64,8 @@ export function Button({
       lg: { paddingHorizontal: 24, paddingVertical: 10 },
     };
 
-    const padding = sizeStyles[size as keyof typeof sizeStyles] || sizeStyles.default;
+    const padding =
+      sizeStyles[size as keyof typeof sizeStyles] || sizeStyles.default;
 
     if (variant === "default") {
       return {
@@ -126,23 +132,24 @@ export function Button({
     }
   };
 
-  const buttonStyle = [
+  const buttonStyle: ViewStyle[] = [
     getButtonStyle(),
-    disabled && styles.disabled,
-    style,
+    ...(disabled ? [styles.disabled] : []),
+    ...(style ? [style] : []),
   ];
 
   const textStyle = [
     getTextStyle(),
-    (size === "icon" || size === "icon-sm" || size === "icon-lg") && styles.iconText,
+    (size === "icon" || size === "icon-sm" || size === "icon-lg") &&
+      styles.iconText,
   ];
 
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
-        buttonStyle,
-        pressed && !disabled && styles.pressed,
+        ...buttonStyle,
+        ...(pressed && !disabled ? [styles.pressed] : []),
       ]}
       disabled={disabled}
     >
