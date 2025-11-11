@@ -39,8 +39,39 @@ export default function Calendar({ events = [] }: CalendarProps) {
   // Filter events for the selected date
   const dayEvents = events.filter((event) => {
     const eventDate = new Date(event.from);
-    return format(eventDate, "yyyy-MM-dd") === date;
+    // Parse event date as local date to avoid timezone issues
+    const eventDateString = format(eventDate, "yyyy-MM-dd");
+    return eventDateString === date;
   });
+
+  // Build marked dates object with dots for days that have events
+  const markedDates = React.useMemo(() => {
+    const marked: Record<string, any> = {};
+
+    // Mark all days with events
+    events.forEach((event) => {
+      const eventDate = new Date(event.from);
+      const eventDateString = format(eventDate, "yyyy-MM-dd");
+      if (!marked[eventDateString]) {
+        marked[eventDateString] = {
+          marked: true,
+          dotColor: theme.colors.primary,
+        };
+      }
+    });
+
+    // Mark the selected date
+    if (date) {
+      marked[date] = {
+        ...marked[date],
+        selected: true,
+        selectedColor: theme.colors.primary,
+        selectedTextColor: theme.colors.primaryForeground,
+      };
+    }
+
+    return marked;
+  }, [events, date, theme.colors.primary, theme.colors.primaryForeground]);
 
   const handleDayPress = (day: DateData) => {
     setDate(day.dateString);
@@ -52,13 +83,7 @@ export default function Calendar({ events = [] }: CalendarProps) {
         <RNCalendar
           current={date}
           onDayPress={handleDayPress}
-          markedDates={{
-            [date]: {
-              selected: true,
-              selectedColor: theme.colors.primary,
-              selectedTextColor: theme.colors.primaryForeground,
-            },
-          }}
+          markedDates={markedDates}
           theme={{
             backgroundColor: "transparent",
             calendarBackground: "transparent",

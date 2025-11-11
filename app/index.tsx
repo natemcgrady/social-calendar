@@ -17,7 +17,11 @@ interface Calendar {
 export default function Home() {
   const router = useRouter();
   const { theme } = useTheme();
-  const [calendars, setCalendars] = useState<Calendar[]>([]);
+  const [calendars, setCalendars] = useState<Calendar[]>([
+    { id: 1, title: "Family" },
+    { id: 2, title: "Friends" },
+    { id: 3, title: "Work" },
+  ]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const styles = useMemo(() => createStyles(theme), [theme]);
