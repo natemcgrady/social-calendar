@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { Stack, useSegments } from "expo-router";
 import { ThemeProvider } from "../contexts/ThemeContext";
+import { CalendarProvider } from "../contexts/CalendarContext";
+import { ToastProvider } from "../contexts/ToastContext";
 import { SidebarProvider, useSidebar } from "../contexts/SidebarContext";
 import { SIDEBAR_WIDTH } from "../components/ui/sidebar";
 import { useTheme } from "../contexts/ThemeContext";
@@ -240,18 +242,22 @@ function SidebarLayout({ children }: { children: React.ReactNode }) {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <SidebarProvider>
-        <SidebarLayout>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              gestureEnabled: true,
-              gestureDirection: "horizontal",
-              animation: "slide_from_right",
-            }}
-          />
-        </SidebarLayout>
-      </SidebarProvider>
+      <CalendarProvider>
+        <ToastProvider>
+          <SidebarProvider>
+            <SidebarLayout>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  gestureEnabled: true,
+                  gestureDirection: "horizontal",
+                  animation: "slide_from_right",
+                }}
+              />
+            </SidebarLayout>
+          </SidebarProvider>
+        </ToastProvider>
+      </CalendarProvider>
     </ThemeProvider>
   );
 }

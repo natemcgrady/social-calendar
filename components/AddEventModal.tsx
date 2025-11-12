@@ -163,8 +163,6 @@ export function AddEventModal({
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingVertical: theme.spacing.md,
-      marginBottom: theme.spacing.md,
     },
     topBarButton: {
       fontSize: 16,
@@ -263,147 +261,77 @@ export function AddEventModal({
   };
 
   return (
-    <>
-      <BottomDrawer open={visible} onClose={handleClose}>
-        <View style={styles.drawerContent}>
-          {/* Top Bar */}
-          <View style={styles.topBar}>
-            <Pressable onPress={handleClose}>
-              <Text
-                style={[
-                  styles.topBarButton,
-                  { color: theme.colors.mutedForeground },
-                ]}
-              >
-                Cancel
-              </Text>
-            </Pressable>
-            <Pressable onPress={handleClose}>
+    <BottomDrawer open={visible} onClose={handleClose}>
+      <View style={styles.drawerContent}>
+        {/* Top Bar */}
+        <View style={styles.topBar}>
+          <Pressable onPress={handleClose}>
+            <Text
+              style={[
+                styles.topBarButton,
+                { color: theme.colors.mutedForeground },
+              ]}
+            >
+              Cancel
+            </Text>
+          </Pressable>
+          <Pressable onPress={handleAdd} disabled={!isValid}>
+            <Text
+              style={[
+                styles.topBarButton,
+                {
+                  color: isValid
+                    ? theme.colors.primary
+                    : theme.colors.mutedForeground,
+                },
+              ]}
+            >
+              Save
+            </Text>
+          </Pressable>
+        </View>
+
+        <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
+          {/* Title Input */}
+          <TextInput
+            style={styles.titleInput}
+            placeholder="Add title"
+            placeholderTextColor={theme.colors.mutedForeground}
+            value={title}
+            onChangeText={setTitle}
+            autoFocus
+          />
+          {/* All-day Toggle */}
+          <View style={styles.allDayRow}>
+            <View style={styles.allDayLeft}>
               <Ionicons
-                name="chevron-down"
-                size={24}
-                color={theme.colors.mutedForeground}
+                name="time-outline"
+                size={20}
+                color={theme.colors.foreground}
+                style={styles.clockIcon}
               />
-            </Pressable>
-            <Pressable onPress={handleAdd} disabled={!isValid}>
               <Text
-                style={[
-                  styles.topBarButton,
-                  {
-                    color: isValid
-                      ? theme.colors.primary
-                      : theme.colors.mutedForeground,
-                  },
-                ]}
+                style={[styles.allDayText, { color: theme.colors.foreground }]}
               >
-                Save
+                All-day
               </Text>
-            </Pressable>
+            </View>
+            <Switch value={isAllDay} onValueChange={setIsAllDay} />
           </View>
 
-          <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
-            {/* Title Input */}
-            <TextInput
-              style={styles.titleInput}
-              placeholder="Add title"
-              placeholderTextColor={theme.colors.mutedForeground}
-              value={title}
-              onChangeText={setTitle}
-              autoFocus
-            />
-            {/* All-day Toggle */}
-            <View style={styles.allDayRow}>
-              <View style={styles.allDayLeft}>
-                <Ionicons
-                  name="time-outline"
-                  size={20}
-                  color={theme.colors.foreground}
-                  style={styles.clockIcon}
-                />
-                <Text
-                  style={[
-                    styles.allDayText,
-                    { color: theme.colors.foreground },
-                  ]}
-                >
-                  All-day
-                </Text>
-              </View>
-              <Switch value={isAllDay} onValueChange={setIsAllDay} />
-            </View>
-
-            {/* Date and Time Fields */}
-            {!isAllDay && (
-              <>
-                {/* Start Date/Time */}
-                <Pressable
-                  onPress={() => {
-                    if (!selectedDate) {
-                      setShowDatePicker(true);
-                    } else {
-                      setShowFromTimePicker(true);
-                    }
-                  }}
-                >
-                  <View style={styles.dateTimeRow}>
-                    <Text
-                      style={[
-                        styles.dateTimeText,
-                        { color: theme.colors.foreground },
-                      ]}
-                    >
-                      {formatDateDisplay(selectedDate)}
-                    </Text>
-                    {selectedDate && (
-                      <Text
-                        style={[
-                          styles.dateTimeText,
-                          { color: theme.colors.foreground },
-                        ]}
-                      >
-                        {formatTimeDisplay(fromTime)}
-                      </Text>
-                    )}
-                  </View>
-                </Pressable>
-
-                {/* End Date/Time */}
-                <Pressable
-                  onPress={() => {
-                    if (!selectedDate) {
-                      setShowDatePicker(true);
-                    } else {
-                      setShowToTimePicker(true);
-                    }
-                  }}
-                >
-                  <View style={styles.dateTimeRow}>
-                    <Text
-                      style={[
-                        styles.dateTimeText,
-                        { color: theme.colors.foreground },
-                      ]}
-                    >
-                      {formatDateDisplay(selectedDate)}
-                    </Text>
-                    {selectedDate && (
-                      <Text
-                        style={[
-                          styles.dateTimeText,
-                          { color: theme.colors.foreground },
-                        ]}
-                      >
-                        {formatTimeDisplay(toTime)}
-                      </Text>
-                    )}
-                  </View>
-                </Pressable>
-              </>
-            )}
-
-            {/* All-day Date Selection */}
-            {isAllDay && (
-              <Pressable onPress={() => setShowDatePicker(true)}>
+          {/* Date and Time Fields */}
+          {!isAllDay && (
+            <>
+              {/* Start Date/Time */}
+              <Pressable
+                onPress={() => {
+                  if (!selectedDate) {
+                    setShowDatePicker(true);
+                  } else {
+                    setShowFromTimePicker(true);
+                  }
+                }}
+              >
                 <View style={styles.dateTimeRow}>
                   <Text
                     style={[
@@ -413,132 +341,190 @@ export function AddEventModal({
                   >
                     {formatDateDisplay(selectedDate)}
                   </Text>
+                  {selectedDate && (
+                    <Text
+                      style={[
+                        styles.dateTimeText,
+                        { color: theme.colors.foreground },
+                      ]}
+                    >
+                      {formatTimeDisplay(fromTime)}
+                    </Text>
+                  )}
                 </View>
               </Pressable>
-            )}
 
-            {/* Date Picker - Inline when open */}
-            {showDatePicker && (
-              <View style={styles.datePickerContainer}>
-                <View style={styles.datePickerHeader}>
+              {/* End Date/Time */}
+              <Pressable
+                onPress={() => {
+                  if (!selectedDate) {
+                    setShowDatePicker(true);
+                  } else {
+                    setShowToTimePicker(true);
+                  }
+                }}
+              >
+                <View style={styles.dateTimeRow}>
                   <Text
                     style={[
-                      styles.datePickerTitle,
+                      styles.dateTimeText,
                       { color: theme.colors.foreground },
                     ]}
                   >
-                    Select Date
+                    {formatDateDisplay(selectedDate)}
                   </Text>
-                  <Pressable onPress={() => setShowDatePicker(false)}>
-                    <Ionicons
-                      name="close"
-                      size={24}
-                      color={theme.colors.foreground}
-                    />
-                  </Pressable>
-                </View>
-                <View style={styles.calendarContainer}>
-                  <RNCalendar
-                    current={dateString || today}
-                    onDayPress={handleDateSelect}
-                    markedDates={
-                      dateString
-                        ? {
-                            [dateString]: {
-                              selected: true,
-                              selectedColor: theme.colors.primary,
-                              selectedTextColor: theme.colors.primaryForeground,
-                            },
-                          }
-                        : {}
-                    }
-                    theme={{
-                      backgroundColor: "transparent",
-                      calendarBackground: "transparent",
-                      textSectionTitleColor: theme.colors.mutedForeground,
-                      selectedDayBackgroundColor: theme.colors.primary,
-                      selectedDayTextColor: theme.colors.primaryForeground,
-                      todayTextColor: theme.colors.primary,
-                      dayTextColor: theme.colors.foreground,
-                      textDisabledColor: theme.colors.mutedForeground,
-                      dotColor: theme.colors.primary,
-                      selectedDotColor: theme.colors.primaryForeground,
-                      arrowColor: theme.colors.foreground,
-                      monthTextColor: theme.colors.foreground,
-                      textDayFontWeight: "400",
-                      textMonthFontWeight: "600",
-                      textDayHeaderFontWeight: "500",
-                      textDayFontSize: 14,
-                      textMonthFontSize: 16,
-                      textDayHeaderFontSize: 12,
-                    }}
-                  />
-                </View>
-              </View>
-            )}
-            {/* Time Pickers (hidden, triggered by date/time row presses) */}
-            {showFromTimePicker && (
-              <>
-                <DateTimePicker
-                  value={fromTime}
-                  mode="time"
-                  is24Hour={false}
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={handleFromTimeChange}
-                />
-                {Platform.OS === "ios" && (
-                  <View style={styles.iosTimePickerActions}>
-                    <Button
-                      variant="outline"
-                      onPress={() => setShowFromTimePicker(false)}
-                      style={styles.timePickerButton}
+                  {selectedDate && (
+                    <Text
+                      style={[
+                        styles.dateTimeText,
+                        { color: theme.colors.foreground },
+                      ]}
                     >
-                      <Text
-                        style={[
-                          styles.cancelButtonText,
-                          { color: theme.colors.foreground },
-                        ]}
-                      >
-                        Done
-                      </Text>
-                    </Button>
-                  </View>
-                )}
-              </>
-            )}
+                      {formatTimeDisplay(toTime)}
+                    </Text>
+                  )}
+                </View>
+              </Pressable>
+            </>
+          )}
 
-            {showToTimePicker && (
-              <>
-                <DateTimePicker
-                  value={toTime}
-                  mode="time"
-                  is24Hour={false}
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={handleToTimeChange}
+          {/* All-day Date Selection */}
+          {isAllDay && (
+            <Pressable onPress={() => setShowDatePicker(true)}>
+              <View style={styles.dateTimeRow}>
+                <Text
+                  style={[
+                    styles.dateTimeText,
+                    { color: theme.colors.foreground },
+                  ]}
+                >
+                  {formatDateDisplay(selectedDate)}
+                </Text>
+              </View>
+            </Pressable>
+          )}
+
+          {/* Date Picker - Inline when open */}
+          {showDatePicker && (
+            <View style={styles.datePickerContainer}>
+              <View style={styles.datePickerHeader}>
+                <Text
+                  style={[
+                    styles.datePickerTitle,
+                    { color: theme.colors.foreground },
+                  ]}
+                >
+                  Select Date
+                </Text>
+                <Pressable onPress={() => setShowDatePicker(false)}>
+                  <Ionicons
+                    name="close"
+                    size={24}
+                    color={theme.colors.foreground}
+                  />
+                </Pressable>
+              </View>
+              <View style={styles.calendarContainer}>
+                <RNCalendar
+                  current={dateString || today}
+                  onDayPress={handleDateSelect}
+                  markedDates={
+                    dateString
+                      ? {
+                          [dateString]: {
+                            selected: true,
+                            selectedColor: theme.colors.primary,
+                            selectedTextColor: theme.colors.primaryForeground,
+                          },
+                        }
+                      : {}
+                  }
+                  theme={{
+                    backgroundColor: "transparent",
+                    calendarBackground: "transparent",
+                    textSectionTitleColor: theme.colors.mutedForeground,
+                    selectedDayBackgroundColor: theme.colors.primary,
+                    selectedDayTextColor: theme.colors.primaryForeground,
+                    todayTextColor: theme.colors.primary,
+                    dayTextColor: theme.colors.foreground,
+                    textDisabledColor: theme.colors.mutedForeground,
+                    dotColor: theme.colors.primary,
+                    selectedDotColor: theme.colors.primaryForeground,
+                    arrowColor: theme.colors.foreground,
+                    monthTextColor: theme.colors.foreground,
+                    textDayFontWeight: "400",
+                    textMonthFontWeight: "600",
+                    textDayHeaderFontWeight: "500",
+                    textDayFontSize: 14,
+                    textMonthFontSize: 16,
+                    textDayHeaderFontSize: 12,
+                  }}
                 />
-                {Platform.OS === "ios" && (
-                  <View style={styles.iosTimePickerActions}>
-                    <Button
-                      variant="outline"
-                      onPress={() => setShowToTimePicker(false)}
-                      style={styles.timePickerButton}
+              </View>
+            </View>
+          )}
+          {/* Time Pickers (hidden, triggered by date/time row presses) */}
+          {showFromTimePicker && (
+            <>
+              <DateTimePicker
+                value={fromTime}
+                mode="time"
+                is24Hour={false}
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={handleFromTimeChange}
+              />
+              {Platform.OS === "ios" && (
+                <View style={styles.iosTimePickerActions}>
+                  <Button
+                    variant="outline"
+                    onPress={() => setShowFromTimePicker(false)}
+                    style={styles.timePickerButton}
+                  >
+                    <Text
+                      style={[
+                        styles.cancelButtonText,
+                        { color: theme.colors.foreground },
+                      ]}
                     >
-                      <Text
-                        style={[
-                          styles.cancelButtonText,
-                          { color: theme.colors.foreground },
-                        ]}
-                      >
-                        Done
-                      </Text>
-                    </Button>
-                  </View>
-                )}
-              </>
-            )}
-          </ScrollView>
-        </View>
-      </BottomDrawer>
-    </>
+                      Done
+                    </Text>
+                  </Button>
+                </View>
+              )}
+            </>
+          )}
+
+          {showToTimePicker && (
+            <>
+              <DateTimePicker
+                value={toTime}
+                mode="time"
+                is24Hour={false}
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={handleToTimeChange}
+              />
+              {Platform.OS === "ios" && (
+                <View style={styles.iosTimePickerActions}>
+                  <Button
+                    variant="outline"
+                    onPress={() => setShowToTimePicker(false)}
+                    style={styles.timePickerButton}
+                  >
+                    <Text
+                      style={[
+                        styles.cancelButtonText,
+                        { color: theme.colors.foreground },
+                      ]}
+                    >
+                      Done
+                    </Text>
+                  </Button>
+                </View>
+              )}
+            </>
+          )}
+        </ScrollView>
+      </View>
+    </BottomDrawer>
   );
 }

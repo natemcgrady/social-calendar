@@ -62,9 +62,21 @@ function getButtonStyles(
 
   // Size-specific styles
   const sizeConfig = {
-    default: { paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm, minHeight: 36 }, // 16pt/8pt
-    sm: { paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.xs, minHeight: 32 }, // 12pt/4pt
-    lg: { paddingHorizontal: theme.spacing["2xl"], paddingVertical: theme.spacing.sm, minHeight: 40 }, // 24pt/8pt
+    default: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      minHeight: 36,
+    }, // 16pt/8pt
+    sm: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      minHeight: 32,
+    }, // 12pt/4pt
+    lg: {
+      paddingHorizontal: theme.spacing["2xl"],
+      paddingVertical: theme.spacing.sm,
+      minHeight: 40,
+    }, // 24pt/8pt
     icon: { width: 36, height: 36, padding: 0, minWidth: 36, minHeight: 36 },
     "icon-sm": {
       width: 32,
@@ -166,30 +178,58 @@ export function Button({
     theme
   );
 
-  const finalButtonStyle: ViewStyle[] = [
-    baseButtonStyle,
-    ...(disabled ? [styles.disabled] : []),
-    ...(style ? (Array.isArray(style) ? style : [style]) : []),
-  ];
-
-  const finalTextStyle: TextStyle[] = [
-    baseTextStyle,
-    ...(((actualSize === "icon" ||
-      actualSize === "icon-sm" ||
-      actualSize === "icon-lg") && [styles.iconText]) ||
-      []),
-  ];
+  const renderContent = () => {
+    if (children) {
+      // If children is a string or number, wrap it in Text component
+      if (typeof children === "string" || typeof children === "number") {
+        return (
+          <Text
+            style={[
+              baseTextStyle,
+              ...(((actualSize === "icon" ||
+                actualSize === "icon-sm" ||
+                actualSize === "icon-lg") && [styles.iconText]) ||
+                []),
+            ]}
+          >
+            {children}
+          </Text>
+        );
+      }
+      // Otherwise, render children as-is (already wrapped in Text or other components)
+      return children;
+    }
+    // Fallback to title prop
+    if (title) {
+      return (
+        <Text
+          style={[
+            baseTextStyle,
+            ...(((actualSize === "icon" ||
+              actualSize === "icon-sm" ||
+              actualSize === "icon-lg") && [styles.iconText]) ||
+              []),
+          ]}
+        >
+          {title}
+        </Text>
+      );
+    }
+    return null;
+  };
 
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
-        ...finalButtonStyle,
+        baseButtonStyle,
+        ...(disabled ? [styles.disabled] : []),
+        ...(style ? (Array.isArray(style) ? style : [style]) : []),
         ...(pressed && !disabled ? [styles.pressed] : []),
       ]}
       disabled={disabled}
     >
-      {children || <Text style={finalTextStyle}>{title}</Text>}
+      {renderContent()}
     </Pressable>
   );
 }

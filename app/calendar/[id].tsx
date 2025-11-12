@@ -5,9 +5,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "../../components/ui/button";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useCalendars } from "../../contexts/CalendarContext";
+import { useToast } from "../../contexts/ToastContext";
 import Calendar from "../../components/ui/calendar";
 import { Theme } from "../../constants/theme";
 import { AddEventModal } from "../../components/AddEventModal";
+import { SettingsMenu } from "../../components/SettingsMenu";
+import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
 
 // Mock data - this would be fetched from DB based on calendar ID
 const calendarEvents: Record<
@@ -62,22 +66,22 @@ const calendarEvents: Record<
   ],
 };
 
-const calendarTitles: Record<number, string> = {
-  1: "Family",
-  2: "Friends",
-  3: "Work",
-};
-
 export default function CalendarDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { theme } = useTheme();
+  const { calendars, deleteCalendar } = useCalendars();
+  const { showToast } = useToast();
   const calendarId = parseInt(id || "1", 10);
   const initialEvents = calendarEvents[calendarId] || [];
   const [events, setEvents] = useState(initialEvents);
   const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
+  const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
+  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const calendarTitle = calendarTitles[calendarId] || "Calendar";
+
+  const calendar = calendars.find((cal) => cal.id === calendarId);
+  const calendarTitle = calendar?.title || "Calendar";
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const handleAddEvent = (event: {
@@ -86,6 +90,12 @@ export default function CalendarDetail() {
     to: string;
   }) => {
     setEvents((prevEvents) => [...prevEvents, event]);
+  };
+
+  const handleDeleteCalendar = () => {
+    deleteCalendar(calendarId);
+    showToast(`${calendarTitle} was deleted`, "success");
+    router.back();
   };
 
   return (
@@ -107,10 +117,14 @@ export default function CalendarDetail() {
         <Button
           variant="ghost"
           size="icon"
-          onPress={() => setIsAddEventModalVisible(true)}
+          onPress={() => setIsSettingsMenuVisible(true)}
           style={styles.addButton}
         >
-          <Ionicons name="add" size={24} color={theme.colors.foreground} />
+          <Ionicons
+            name="ellipsis-vertical"
+            size={24}
+            color={theme.colors.foreground}
+          />
         </Button>
       </View>
       <ScrollView
@@ -128,6 +142,18 @@ export default function CalendarDetail() {
         onClose={() => setIsAddEventModalVisible(false)}
         onAdd={handleAddEvent}
         initialDate={selectedDate}
+      />
+      <SettingsMenu
+        open={isSettingsMenuVisible}
+        onClose={() => setIsSettingsMenuVisible(false)}
+        onDeletePress={() => setIsDeleteDialogVisible(true)}
+        calendarTitle={calendarTitle}
+      />
+      <DeleteConfirmationDialog
+        open={isDeleteDialogVisible}
+        onClose={() => setIsDeleteDialogVisible(false)}
+        onConfirm={handleDeleteCalendar}
+        calendarTitle={calendarTitle}
       />
     </SafeAreaView>
   );

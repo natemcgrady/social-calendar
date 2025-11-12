@@ -6,22 +6,14 @@ import CalendarCard from "../components/CalendarCard";
 import { FloatingActionButton } from "../components/FloatingActionButton";
 import { CreateCalendarModal } from "../components/CreateCalendarModal";
 import { useTheme } from "../contexts/ThemeContext";
+import { useCalendars, Calendar } from "../contexts/CalendarContext";
 import { Theme } from "../constants/theme";
 import AppHeader from "../components/AppHeader";
-
-interface Calendar {
-  id: number;
-  title: string;
-}
 
 export default function Home() {
   const router = useRouter();
   const { theme } = useTheme();
-  const [calendars, setCalendars] = useState<Calendar[]>([
-    { id: 1, title: "Family" },
-    { id: 2, title: "Friends" },
-    { id: 3, title: "Work" },
-  ]);
+  const { calendars, addCalendar } = useCalendars();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -31,7 +23,7 @@ export default function Home() {
       id: Date.now(), // Simple ID generation - in production, use proper ID generation
       title: name,
     };
-    setCalendars([...calendars, newCalendar]);
+    addCalendar(newCalendar);
   };
 
   return (
