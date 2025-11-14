@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -18,13 +18,6 @@ export function TimePickerModal({
   onClose,
 }: TimePickerModalProps) {
   const { theme } = useTheme();
-  const [tempTime, setTempTime] = useState<Date>(value);
-
-  useEffect(() => {
-    if (visible) {
-      setTempTime(value);
-    }
-  }, [visible, value]);
 
   const handleTimeChange = (event: any, selectedTime?: Date) => {
     if (Platform.OS === "android") {
@@ -37,17 +30,11 @@ export function TimePickerModal({
       }
       onClose();
     } else {
-      // iOS: update temp time as user spins
+      // iOS: update time automatically as user scrolls
       if (selectedTime) {
-        setTempTime(selectedTime);
-        onChange(selectedTime); // Update parent's temp time
+        onChange(selectedTime);
       }
     }
-  };
-
-  const handleDone = () => {
-    onChange(tempTime);
-    onClose();
   };
 
   if (!visible) return null;
@@ -58,7 +45,7 @@ export function TimePickerModal({
       marginBottom: theme.spacing.md,
       borderRadius: theme.radius.xl,
       borderWidth: 0,
-      backgroundColor: "transparent",
+      backgroundColor: "red",
       shadowColor: "transparent",
       shadowOffset: {
         width: 0,
@@ -76,9 +63,9 @@ export function TimePickerModal({
   return (
     <View style={styles.timePickerWrapper}>
       <Card style={styles.timePickerContainer}>
-        <CardContent style={{ padding: 0 }}>
+        <CardContent>
           <DateTimePicker
-            value={tempTime}
+            value={value}
             mode="time"
             is24Hour={false}
             display={Platform.OS === "ios" ? "spinner" : "default"}

@@ -43,7 +43,14 @@ export function ViewEventModal({
   };
 
   const formatTimeDisplay = (date: Date): string => {
-    return format(date, "h:mm a");
+    const minutes = date.getMinutes();
+    const isRoundHour = minutes === 0;
+
+    if (isRoundHour) {
+      return format(date, "h a");
+    } else {
+      return format(date, "h:mm a");
+    }
   };
 
   const styles = StyleSheet.create({

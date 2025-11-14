@@ -183,8 +183,8 @@ export function AddEventModal({
                   <TimePickerModal
                     visible={form.showFromTimePicker}
                     value={form.fromTime}
-                    onChange={form.setTempFromTime}
-                    onClose={form.handleFromTimeDone}
+                    onChange={form.handleFromTimeChange}
+                    onClose={() => form.setShowFromTimePicker(false)}
                   />
 
                   <DateTimeRow
@@ -211,8 +211,8 @@ export function AddEventModal({
                   <TimePickerModal
                     visible={form.showToTimePicker}
                     value={form.toTime}
-                    onChange={form.setTempToTime}
-                    onClose={form.handleToTimeDone}
+                    onChange={form.handleToTimeChange}
+                    onClose={() => form.setShowToTimePicker(false)}
                   />
                 </>
               )}

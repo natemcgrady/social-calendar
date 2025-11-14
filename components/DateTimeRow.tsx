@@ -26,7 +26,14 @@ export function DateTimeRow({
   };
 
   const formatTimeDisplay = (time: Date): string => {
-    return format(time, "h a");
+    const minutes = time.getMinutes();
+    const isRoundHour = minutes === 0;
+
+    if (isRoundHour) {
+      return format(time, "h a");
+    } else {
+      return format(time, "h:mm a");
+    }
   };
 
   const styles = StyleSheet.create({
