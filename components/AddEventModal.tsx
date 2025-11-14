@@ -1,12 +1,13 @@
 import React from "react";
-import { Text, TextInput, StyleSheet, View, ScrollView } from "react-native";
+import { TextInput, StyleSheet, View, ScrollView, Modal } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../contexts/ThemeContext";
-import { BottomDrawer } from "./ui/bottom-drawer";
+import { Button } from "./ui/button";
+import { Ionicons } from "@expo/vector-icons";
 import { DatePickerModal } from "./ui/date-picker-modal";
 import { TimePickerModal } from "./ui/time-picker-modal";
 import { DateTimeRow } from "./DateTimeRow";
 import { AllDayToggle } from "./AllDayToggle";
-import { EventFormHeader } from "./EventFormHeader";
 import { useEventForm } from "../hooks/useEventForm";
 
 interface AddEventModalProps {
@@ -55,160 +56,204 @@ export function AddEventModal({
   };
 
   const styles = StyleSheet.create({
-    drawerContent: {
+    modal: {
       flex: 1,
     },
-    form: {
+    container: {
       flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    headerRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
+    content: {
+      flex: 1,
+      padding: theme.spacing.lg,
     },
     titleInput: {
-      fontSize: 28,
+      fontSize: 32,
       fontWeight: "600",
       color: theme.colors.foreground,
-      paddingVertical: theme.spacing.lg,
-      minHeight: 64,
-      letterSpacing: -0.3,
-      paddingHorizontal: theme.spacing["4xl"],
-    },
-    titleDivider: {
-      height: 1,
-      backgroundColor: theme.colors.border,
-      width: "100%",
+      paddingHorizontal: theme.spacing.lg,
+      letterSpacing: -0.5,
     },
     dateTimeContainer: {
-      paddingHorizontal: theme.spacing["4xl"],
+      marginTop: theme.spacing.md,
     },
   });
 
   return (
-    <BottomDrawer open={visible} onClose={handleClose}>
-      <View style={styles.drawerContent}>
-        <EventFormHeader
-          onCancel={handleClose}
-          onSave={handleAdd}
-          isValid={form.isValid}
-          isEditing={!!eventToEdit}
-        />
-
-        <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
-          <TextInput
-            style={styles.titleInput}
-            placeholder="Add title"
-            placeholderTextColor={theme.colors.mutedForeground}
-            value={form.title}
-            onChangeText={form.setTitle}
-            autoFocus={!eventToEdit}
-          />
-          <View style={styles.titleDivider} />
-
-          <View style={styles.dateTimeContainer}>
-            <AllDayToggle
-              value={form.isAllDay}
-              onValueChange={form.setIsAllDay}
+    <>
+      <Modal
+        visible={visible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={handleClose}
+      >
+        <SafeAreaView
+          style={styles.container}
+          edges={["top", "left", "right", "bottom"]}
+        >
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <Button variant="ghost" size="icon" onPress={handleClose}>
+                <Ionicons
+                  name="close"
+                  size={24}
+                  color={theme.colors.foreground}
+                />
+              </Button>
+            </View>
+            <View style={styles.headerRight}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onPress={handleAdd}
+                disabled={!form.isValid}
+              >
+                <Ionicons
+                  name="checkmark"
+                  size={24}
+                  color={
+                    form.isValid
+                      ? theme.colors.primary
+                      : theme.colors.mutedForeground
+                  }
+                />
+              </Button>
+            </View>
+          </View>
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+          >
+            <TextInput
+              style={styles.titleInput}
+              placeholder="Add title"
+              placeholderTextColor={theme.colors.mutedForeground}
+              value={form.title}
+              onChangeText={form.setTitle}
+              autoFocus={!eventToEdit}
             />
 
-            {!form.isAllDay && (
-              <>
-                <DateTimeRow
-                  label="Start"
-                  date={form.startDate}
-                  time={form.fromTime}
-                  showTime={!!form.startDate}
-                  onDatePress={() => {
-                    closeAllPickers();
-                    form.setShowStartDatePicker(true);
-                  }}
-                  onTimePress={() => {
-                    closeAllPickers();
-                    form.setShowFromTimePicker(true);
-                  }}
-                />
+            <View style={styles.dateTimeContainer}>
+              <AllDayToggle
+                value={form.isAllDay}
+                onValueChange={form.setIsAllDay}
+              />
 
-                <DatePickerModal
-                  visible={form.showStartDatePicker && !form.isAllDay}
-                  selectedDate={form.startDate}
-                  onDateSelect={form.handleStartDateSelect}
-                  onClose={() => form.setShowStartDatePicker(false)}
-                />
+              {!form.isAllDay && (
+                <>
+                  <DateTimeRow
+                    date={form.startDate}
+                    time={form.fromTime}
+                    showTime={!!form.startDate}
+                    onDatePress={() => {
+                      closeAllPickers();
+                      form.setShowStartDatePicker(true);
+                    }}
+                    onTimePress={() => {
+                      closeAllPickers();
+                      form.setShowFromTimePicker(true);
+                    }}
+                  />
 
-                <TimePickerModal
-                  visible={form.showFromTimePicker}
-                  value={form.fromTime}
-                  onChange={form.setTempFromTime}
-                  onClose={form.handleFromTimeDone}
-                  title="Start Time"
-                />
+                  <DatePickerModal
+                    visible={form.showStartDatePicker && !form.isAllDay}
+                    selectedDate={form.startDate}
+                    onDateSelect={form.handleStartDateSelect}
+                    onClose={() => form.setShowStartDatePicker(false)}
+                  />
 
-                <DateTimeRow
-                  label="End"
-                  date={form.endDate}
-                  time={form.toTime}
-                  showTime={!!form.endDate}
-                  onDatePress={() => {
-                    closeAllPickers();
-                    form.setShowEndDatePicker(true);
-                  }}
-                  onTimePress={() => {
-                    closeAllPickers();
-                    form.setShowToTimePicker(true);
-                  }}
-                />
+                  <TimePickerModal
+                    visible={form.showFromTimePicker}
+                    value={form.fromTime}
+                    onChange={form.setTempFromTime}
+                    onClose={form.handleFromTimeDone}
+                  />
 
-                <DatePickerModal
-                  visible={form.showEndDatePicker}
-                  selectedDate={form.endDate}
-                  onDateSelect={form.handleEndDateSelect}
-                  onClose={() => form.setShowEndDatePicker(false)}
-                />
+                  <DateTimeRow
+                    date={form.endDate}
+                    time={form.toTime}
+                    showTime={!!form.endDate}
+                    onDatePress={() => {
+                      closeAllPickers();
+                      form.setShowEndDatePicker(true);
+                    }}
+                    onTimePress={() => {
+                      closeAllPickers();
+                      form.setShowToTimePicker(true);
+                    }}
+                  />
 
-                <TimePickerModal
-                  visible={form.showToTimePicker}
-                  value={form.toTime}
-                  onChange={form.setTempToTime}
-                  onClose={form.handleToTimeDone}
-                  title="End Time"
-                />
-              </>
-            )}
+                  <DatePickerModal
+                    visible={form.showEndDatePicker}
+                    selectedDate={form.endDate}
+                    onDateSelect={form.handleEndDateSelect}
+                    onClose={() => form.setShowEndDatePicker(false)}
+                  />
 
-            {form.isAllDay && (
-              <>
-                <DateTimeRow
-                  label="Start"
-                  date={form.startDate}
-                  onDatePress={() => {
-                    closeAllPickers();
-                    form.setShowStartDatePicker(true);
-                  }}
-                />
+                  <TimePickerModal
+                    visible={form.showToTimePicker}
+                    value={form.toTime}
+                    onChange={form.setTempToTime}
+                    onClose={form.handleToTimeDone}
+                  />
+                </>
+              )}
 
-                <DatePickerModal
-                  visible={form.showStartDatePicker && form.isAllDay}
-                  selectedDate={form.startDate}
-                  onDateSelect={form.handleStartDateSelect}
-                  onClose={() => form.setShowStartDatePicker(false)}
-                />
+              {form.isAllDay && (
+                <>
+                  <DateTimeRow
+                    date={form.startDate}
+                    onDatePress={() => {
+                      closeAllPickers();
+                      form.setShowStartDatePicker(true);
+                    }}
+                  />
 
-                <DateTimeRow
-                  label="End"
-                  date={form.endDate}
-                  onDatePress={() => {
-                    closeAllPickers();
-                    form.setShowEndDatePicker(true);
-                  }}
-                />
+                  <DatePickerModal
+                    visible={form.showStartDatePicker && form.isAllDay}
+                    selectedDate={form.startDate}
+                    onDateSelect={form.handleStartDateSelect}
+                    onClose={() => form.setShowStartDatePicker(false)}
+                  />
 
-                <DatePickerModal
-                  visible={form.showEndDatePicker && form.isAllDay}
-                  selectedDate={form.endDate}
-                  onDateSelect={form.handleEndDateSelect}
-                  onClose={() => form.setShowEndDatePicker(false)}
-                />
-              </>
-            )}
-          </View>
-        </ScrollView>
-      </View>
-    </BottomDrawer>
+                  <DateTimeRow
+                    date={form.endDate}
+                    onDatePress={() => {
+                      closeAllPickers();
+                      form.setShowEndDatePicker(true);
+                    }}
+                  />
+
+                  <DatePickerModal
+                    visible={form.showEndDatePicker && form.isAllDay}
+                    selectedDate={form.endDate}
+                    onDateSelect={form.handleEndDateSelect}
+                    onClose={() => form.setShowEndDatePicker(false)}
+                  />
+                </>
+              )}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+    </>
   );
 }

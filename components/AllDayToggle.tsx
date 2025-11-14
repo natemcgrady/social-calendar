@@ -17,9 +17,7 @@ export function AllDayToggle({ value, onValueChange }: AllDayToggleProps) {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingVertical: theme.spacing.lg,
       paddingHorizontal: theme.spacing.md,
-      backgroundColor: theme.colors.muted,
       borderRadius: theme.radius.lg,
       marginTop: theme.spacing.md,
       marginBottom: theme.spacing.sm,
@@ -47,9 +45,7 @@ export function AllDayToggle({ value, onValueChange }: AllDayToggleProps) {
           color={theme.colors.foreground}
           style={styles.clockIcon}
         />
-        <Text
-          style={[styles.allDayText, { color: theme.colors.foreground }]}
-        >
+        <Text style={[styles.allDayText, { color: theme.colors.foreground }]}>
           All-day
         </Text>
       </View>
@@ -57,4 +53,3 @@ export function AllDayToggle({ value, onValueChange }: AllDayToggleProps) {
     </View>
   );
 }
-

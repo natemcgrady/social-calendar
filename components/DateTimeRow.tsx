@@ -4,7 +4,6 @@ import { useTheme } from "../contexts/ThemeContext";
 import { format } from "date-fns";
 
 interface DateTimeRowProps {
-  label: string;
   date?: Date;
   time?: Date;
   onDatePress?: () => void;
@@ -13,7 +12,6 @@ interface DateTimeRowProps {
 }
 
 export function DateTimeRow({
-  label,
   date,
   time,
   onDatePress,
@@ -38,7 +36,6 @@ export function DateTimeRow({
       justifyContent: "space-between",
       paddingVertical: theme.spacing.lg,
       paddingHorizontal: theme.spacing.md,
-      backgroundColor: theme.colors.muted,
       borderRadius: theme.radius.lg,
       marginTop: theme.spacing.xs,
       minHeight: 56,
@@ -49,14 +46,6 @@ export function DateTimeRow({
     dateTimeSection: {
       flex: 1,
       paddingVertical: theme.spacing.xs,
-    },
-    dateTimeLabel: {
-      fontSize: 13,
-      fontWeight: "500",
-      color: theme.colors.mutedForeground,
-      marginBottom: theme.spacing.xs,
-      textTransform: "uppercase",
-      letterSpacing: 0.5,
     },
     dateTimeValue: {
       fontSize: 15,
@@ -79,7 +68,6 @@ export function DateTimeRow({
           ]}
         >
           <View>
-            <Text style={styles.dateTimeLabel}>{label}</Text>
             <Text
               style={[
                 styles.dateTimeValue,
@@ -100,14 +88,10 @@ export function DateTimeRow({
           ]}
         >
           <View style={{ alignItems: "flex-end" }}>
-            <Text style={styles.dateTimeLabel}>Time</Text>
-            <Text style={styles.dateTimeValue}>
-              {formatTimeDisplay(time)}
-            </Text>
+            <Text style={styles.dateTimeValue}>{formatTimeDisplay(time)}</Text>
           </View>
         </Pressable>
       )}
     </View>
   );
 }
-
