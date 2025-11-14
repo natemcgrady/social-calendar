@@ -13,6 +13,7 @@ import { AddEventModal } from "../../components/AddEventModal";
 import { ViewEventModal } from "../../components/ViewEventModal";
 import { SettingsMenu } from "../../components/SettingsMenu";
 import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
+import { DeleteEventConfirmationDialog } from "../../components/DeleteEventConfirmationDialog";
 import { Event } from "../../components/ui/calendar";
 
 // Mock data - this would be fetched from DB based on calendar ID
@@ -81,6 +82,7 @@ export default function CalendarDetail() {
   const [isViewEventModalVisible, setIsViewEventModalVisible] = useState(false);
   const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
+  const [isDeleteEventDialogVisible, setIsDeleteEventDialogVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
@@ -140,6 +142,28 @@ export default function CalendarDetail() {
     router.back();
   };
 
+  const handleDeleteEvent = () => {
+    if (selectedEvent) {
+      setEvents((prevEvents) =>
+        prevEvents.filter(
+          (event) =>
+            !(
+              event.title === selectedEvent.title &&
+              event.from === selectedEvent.from &&
+              event.to === selectedEvent.to
+            )
+        )
+      );
+      showToast(`${selectedEvent.title} was deleted`, "success");
+      setSelectedEvent(null);
+      setIsViewEventModalVisible(false);
+    }
+  };
+
+  const handleDeleteEventPress = () => {
+    setIsDeleteEventDialogVisible(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.header]}>
@@ -196,6 +220,15 @@ export default function CalendarDetail() {
         }}
         event={selectedEvent}
         onEdit={handleEditEvent}
+        onDelete={handleDeleteEventPress}
+        calendarTitle={calendarTitle}
+        createdBy="You"
+      />
+      <DeleteEventConfirmationDialog
+        open={isDeleteEventDialogVisible}
+        onClose={() => setIsDeleteEventDialogVisible(false)}
+        onConfirm={handleDeleteEvent}
+        eventTitle={selectedEvent?.title || ""}
       />
       <SettingsMenu
         open={isSettingsMenuVisible}

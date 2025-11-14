@@ -1,22 +1,21 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Modal, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { format } from "date-fns";
 import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "./ui/dialog";
 import { Event } from "./ui/calendar";
+import { Ionicons } from "@expo/vector-icons";
+import { EventActionsMenu } from "./EventActionsMenu";
 
 interface ViewEventModalProps {
   visible: boolean;
   onClose: () => void;
   event: Event | null;
   onEdit: () => void;
+  onDelete?: () => void;
+  calendarTitle?: string;
+  createdBy?: string;
 }
 
 export function ViewEventModal({
@@ -24,8 +23,12 @@ export function ViewEventModal({
   onClose,
   event,
   onEdit,
+  onDelete,
+  calendarTitle,
+  createdBy,
 }: ViewEventModalProps) {
   const { theme } = useTheme();
+  const [isActionsMenuVisible, setIsActionsMenuVisible] = useState(false);
 
   if (!event) return null;
 
@@ -44,19 +47,44 @@ export function ViewEventModal({
   };
 
   const styles = StyleSheet.create({
+    modal: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    headerRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
     content: {
+      flex: 1,
       padding: theme.spacing.lg,
     },
     eventTitle: {
-      fontSize: 24,
+      fontSize: 32,
       fontWeight: "600",
       color: theme.colors.foreground,
-      marginBottom: theme.spacing.lg,
-      flexShrink: 1,
+      marginBottom: theme.spacing.xl,
+      letterSpacing: -0.5,
     },
     detailRow: {
-      marginBottom: theme.spacing.md,
-      flexShrink: 1,
+      marginBottom: theme.spacing.lg,
     },
     detailLabel: {
       fontSize: 13,
@@ -67,61 +95,117 @@ export function ViewEventModal({
       letterSpacing: 0.5,
     },
     detailValue: {
-      fontSize: 15,
+      fontSize: 16,
       fontWeight: "500",
       color: theme.colors.foreground,
-      flexShrink: 1,
-    },
-    footer: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      gap: theme.spacing.md,
     },
   });
 
+  const handleDeletePress = () => {
+    if (onDelete) {
+      onDelete();
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={visible} onOpenChange={onClose}>
-      <DialogContent onClose={onClose} style={styles.content}>
-        <DialogHeader>
-          <DialogTitle style={styles.eventTitle}>{event.title}</DialogTitle>
-        </DialogHeader>
-
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Date</Text>
-          <Text style={styles.detailValue}>
-            {formatDateDisplay(startDate)}
-            {startDate.toDateString() !== endDate.toDateString()
-              ? ` - ${formatDateDisplay(endDate)}`
-              : ""}
-          </Text>
-        </View>
-
-        {!isAllDay && (
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Time</Text>
-            <Text style={styles.detailValue}>
-              {formatTimeDisplay(startDate)} - {formatTimeDisplay(endDate)}
-            </Text>
+    <>
+      <Modal
+        visible={visible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={onClose}
+      >
+        <SafeAreaView
+          style={styles.container}
+          edges={["top", "left", "right", "bottom"]}
+        >
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <Button variant="ghost" size="icon" onPress={onClose}>
+                <Ionicons
+                  name="close"
+                  size={24}
+                  color={theme.colors.foreground}
+                />
+              </Button>
+            </View>
+            <View style={styles.headerRight}>
+              <Button variant="ghost" size="icon" onPress={onEdit}>
+                <Ionicons
+                  name="pencil"
+                  size={20}
+                  color={theme.colors.foreground}
+                />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onPress={() => setIsActionsMenuVisible(true)}
+              >
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={20}
+                  color={theme.colors.foreground}
+                />
+              </Button>
+            </View>
           </View>
-        )}
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.eventTitle}>{event.title}</Text>
 
-        {isAllDay && (
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Time</Text>
-            <Text style={styles.detailValue}>All day</Text>
-          </View>
-        )}
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Date</Text>
+              <Text style={styles.detailValue}>
+                {formatDateDisplay(startDate)}
+                {startDate.toDateString() !== endDate.toDateString()
+                  ? ` - ${formatDateDisplay(endDate)}`
+                  : ""}
+              </Text>
+            </View>
 
-        <DialogFooter style={styles.footer}>
-          <Button variant="outline" onPress={onClose}>
-            <Text style={{ color: theme.colors.foreground }}>Close</Text>
-          </Button>
-          <Button onPress={onEdit}>
-            <Text style={{ color: theme.colors.primaryForeground }}>Edit</Text>
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            {!isAllDay && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Time</Text>
+                <Text style={styles.detailValue}>
+                  {formatTimeDisplay(startDate)} - {formatTimeDisplay(endDate)}
+                </Text>
+              </View>
+            )}
+
+            {isAllDay && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Time</Text>
+                <Text style={styles.detailValue}>All day</Text>
+              </View>
+            )}
+
+            {createdBy && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Created by</Text>
+                <Text style={styles.detailValue}>{createdBy}</Text>
+              </View>
+            )}
+
+            {calendarTitle && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Calendar</Text>
+                <Text style={styles.detailValue}>{calendarTitle}</Text>
+              </View>
+            )}
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+      {onDelete && (
+        <EventActionsMenu
+          open={isActionsMenuVisible}
+          onClose={() => setIsActionsMenuVisible(false)}
+          onDeletePress={handleDeletePress}
+        />
+      )}
+    </>
   );
 }
-
