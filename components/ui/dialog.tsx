@@ -10,6 +10,7 @@ import {
   TextStyle,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -71,6 +72,8 @@ function DialogContent({
   onClose,
 }: DialogContentProps) {
   const { theme } = useTheme();
+  const screenWidth = Dimensions.get("window").width;
+  const maxWidth = screenWidth * 0.9; // 90% of screen width
 
   return (
     <View style={styles.contentContainer}>
@@ -103,6 +106,7 @@ function DialogContent({
                   shadowOpacity: 0.25,
                   shadowRadius: 8,
                   elevation: 5,
+                  maxWidth,
                 },
                 style,
               ]}
@@ -238,9 +242,9 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   content: {
-    maxWidth: 600,
     minWidth: 320,
-    width: "100%",
+    width: "90%",
+    flexShrink: 1,
     position: "relative",
   },
   closeButton: {

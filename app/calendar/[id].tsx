@@ -10,8 +10,10 @@ import { useToast } from "../../contexts/ToastContext";
 import Calendar from "../../components/ui/calendar";
 import { Theme } from "../../constants/theme";
 import { AddEventModal } from "../../components/AddEventModal";
+import { ViewEventModal } from "../../components/ViewEventModal";
 import { SettingsMenu } from "../../components/SettingsMenu";
 import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
+import { Event } from "../../components/ui/calendar";
 
 // Mock data - this would be fetched from DB based on calendar ID
 const calendarEvents: Record<
@@ -76,9 +78,12 @@ export default function CalendarDetail() {
   const initialEvents = calendarEvents[calendarId] || [];
   const [events, setEvents] = useState(initialEvents);
   const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
+  const [isViewEventModalVisible, setIsViewEventModalVisible] = useState(false);
   const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
 
   const calendar = calendars.find((cal) => cal.id === calendarId);
   const calendarTitle = calendar?.title || "Calendar";
@@ -90,6 +95,43 @@ export default function CalendarDetail() {
     to: string;
   }) => {
     setEvents((prevEvents) => [...prevEvents, event]);
+  };
+
+  const handleEventPress = (event: Event) => {
+    setSelectedEvent(event);
+    setIsViewEventModalVisible(true);
+  };
+
+  const handleEditEvent = () => {
+    if (selectedEvent) {
+      setEventToEdit(selectedEvent);
+      setIsViewEventModalVisible(false);
+      setIsAddEventModalVisible(true);
+    }
+  };
+
+  const handleUpdateEvent = (updatedEvent: {
+    title: string;
+    from: string;
+    to: string;
+  }) => {
+    if (eventToEdit) {
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.title === eventToEdit.title &&
+          event.from === eventToEdit.from &&
+          event.to === eventToEdit.to
+            ? updatedEvent
+            : event
+        )
+      );
+      setEventToEdit(null);
+    }
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddEventModalVisible(false);
+    setEventToEdit(null);
   };
 
   const handleDeleteCalendar = () => {
@@ -135,13 +177,25 @@ export default function CalendarDetail() {
           events={events}
           onAddEventPress={() => setIsAddEventModalVisible(true)}
           onSelectedDateChange={setSelectedDate}
+          onEventPress={handleEventPress}
         />
       </ScrollView>
       <AddEventModal
         visible={isAddEventModalVisible}
-        onClose={() => setIsAddEventModalVisible(false)}
+        onClose={handleCloseAddModal}
         onAdd={handleAddEvent}
+        onEdit={handleUpdateEvent}
         initialDate={selectedDate}
+        eventToEdit={eventToEdit}
+      />
+      <ViewEventModal
+        visible={isViewEventModalVisible}
+        onClose={() => {
+          setIsViewEventModalVisible(false);
+          setSelectedEvent(null);
+        }}
+        event={selectedEvent}
+        onEdit={handleEditEvent}
       />
       <SettingsMenu
         open={isSettingsMenuVisible}

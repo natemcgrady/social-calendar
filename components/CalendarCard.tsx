@@ -8,6 +8,20 @@ import {
   Pressable,
 } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+import { AvatarStack, CalendarMember } from "./ui/avatar-stack";
+
+const MEMBERS: CalendarMember[] = [
+  {
+    id: 1,
+    name: "Nate McGrady",
+    avatarUrl: require("../assets/avatar.png"),
+  },
+  {
+    id: 2,
+    name: "Amelia McGrady",
+    avatarUrl: require("../assets/mel.jpg"),
+  },
+];
 
 interface CalendarCardProps {
   title: string;
@@ -24,10 +38,11 @@ const CalendarCard = ({ title, style, onPress }: CalendarCardProps) => {
       style={({ pressed }) => [pressed && styles.pressed]}
     >
       <Card style={style as ViewStyle}>
-        <CardContent>
+        <CardContent style={styles.content}>
           <Text style={[styles.title, { color: theme.colors.cardForeground }]}>
             {title}
           </Text>
+          <AvatarStack members={MEMBERS} />
         </CardContent>
       </Card>
     </Pressable>
@@ -37,6 +52,11 @@ const CalendarCard = ({ title, style, onPress }: CalendarCardProps) => {
 export default CalendarCard;
 
 const styles = StyleSheet.create({
+  content: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   title: {
     fontSize: 16,
     fontWeight: "bold",

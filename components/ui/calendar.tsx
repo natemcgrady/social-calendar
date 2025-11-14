@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { Calendar as RNCalendar, DateData } from "react-native-calendars";
-import { format } from "date-fns";
+import { format, eachDayOfInterval } from "date-fns";
 import { Card, CardContent, CardFooter } from "./card";
 import { Button } from "./button";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,6 +17,7 @@ interface CalendarProps {
   events?: Event[];
   onAddEventPress?: () => void;
   onSelectedDateChange?: (date: string) => void; // YYYY-MM-DD format
+  onEventPress?: (event: Event) => void;
 }
 
 function formatDateRange(from: Date, to: Date): string {
@@ -25,10 +26,64 @@ function formatDateRange(from: Date, to: Date): string {
   return `${fromTime} - ${toTime}`;
 }
 
+// Helper function to check if an event is all-day
+function isAllDayEvent(event: Event): boolean {
+  const fromDate = new Date(event.from);
+  const toDate = new Date(event.to);
+  const fromTimeStr = format(fromDate, "HH:mm");
+  const toTimeStr = format(toDate, "HH:mm");
+  return fromTimeStr === "00:00" && toTimeStr === "23:59";
+}
+
+// Format event time display based on whether it's multi-day and/or all-day
+function formatEventTimeDisplay(event: Event): string {
+  const fromDate = new Date(event.from);
+  const toDate = new Date(event.to);
+  const isMultiDay = isMultiDateEvent(event);
+  const isAllDay = isAllDayEvent(event);
+
+  if (isAllDay) {
+    // All-day event
+    const fromDateStr = format(fromDate, "EEEE, MMM d");
+    if (isMultiDay) {
+      const toDateStr = format(toDate, "EEEE, MMM d");
+      return `${fromDateStr} - ${toDateStr}`;
+    } else {
+      return fromDateStr;
+    }
+  } else {
+    // Event with specific times
+    if (isMultiDay) {
+      const fromDateStr = format(fromDate, "EEEE, MMM d 'at' h:mm a");
+      const toDateStr = format(toDate, "EEEE, MMM d 'at' h:mm a");
+      return `${fromDateStr} - ${toDateStr}`;
+    } else {
+      // Single day event with times - use the original format
+      return formatDateRange(fromDate, toDate);
+    }
+  }
+}
+
+// Helper function to get all dates between start and end (inclusive)
+function getDatesInRange(startDate: Date, endDate: Date): string[] {
+  const dates = eachDayOfInterval({ start: startDate, end: endDate });
+  return dates.map((date) => format(date, "yyyy-MM-dd"));
+}
+
+// Helper function to check if an event spans multiple days
+function isMultiDateEvent(event: Event): boolean {
+  const startDate = new Date(event.from);
+  const endDate = new Date(event.to);
+  const startDateString = format(startDate, "yyyy-MM-dd");
+  const endDateString = format(endDate, "yyyy-MM-dd");
+  return startDateString !== endDateString;
+}
+
 export default function Calendar({
   events = [],
   onAddEventPress,
   onSelectedDateChange,
+  onEventPress,
 }: CalendarProps) {
   const { theme } = useTheme();
   const today = format(new Date(), "yyyy-MM-dd");
@@ -49,27 +104,66 @@ export default function Calendar({
       })()
     : new Date();
 
-  // Filter events for the selected date
-  const dayEvents = events.filter((event) => {
-    const eventDate = new Date(event.from);
-    // Parse event date as local date to avoid timezone issues
-    const eventDateString = format(eventDate, "yyyy-MM-dd");
-    return eventDateString === date;
-  });
+  // Filter events for the selected date (including multi-date events)
+  const dayEvents = React.useMemo(() => {
+    return events.filter((event) => {
+      const startDate = new Date(event.from);
+      const endDate = new Date(event.to);
+      const selectedDateObj = date
+        ? (() => {
+            const [year, month, day] = date.split("-").map(Number);
+            return new Date(year, month - 1, day);
+          })()
+        : null;
 
-  // Build marked dates object with dots for days that have events
+      if (!selectedDateObj) return false;
+
+      // Check if selected date falls within the event range
+      const eventStartDate = format(startDate, "yyyy-MM-dd");
+      const eventEndDate = format(endDate, "yyyy-MM-dd");
+      const selectedDateStr = format(selectedDateObj, "yyyy-MM-dd");
+
+      return (
+        selectedDateStr >= eventStartDate && selectedDateStr <= eventEndDate
+      );
+    });
+  }, [events, date]);
+
+  // Build marked dates object with dots for events
   const markedDates = React.useMemo(() => {
     const marked: Record<string, any> = {};
 
-    // Mark all days with events
     events.forEach((event) => {
-      const eventDate = new Date(event.from);
-      const eventDateString = format(eventDate, "yyyy-MM-dd");
-      if (!marked[eventDateString]) {
-        marked[eventDateString] = {
-          marked: true,
-          dotColor: theme.colors.primary,
-        };
+      const startDate = new Date(event.from);
+      const endDate = new Date(event.to);
+      const startDateString = format(startDate, "yyyy-MM-dd");
+      const endDateString = format(endDate, "yyyy-MM-dd");
+
+      if (isMultiDateEvent(event)) {
+        // Multi-date event: mark all days in range with red dot
+        const datesInRange = getDatesInRange(startDate, endDate);
+        datesInRange.forEach((dateStr) => {
+          if (!marked[dateStr]) {
+            marked[dateStr] = {
+              hasBlueDot: false,
+              hasRedDot: false,
+            };
+          }
+
+          // Mark that this day has a red dot
+          marked[dateStr].hasRedDot = true;
+        });
+      } else {
+        // Single-day event: mark with blue dot
+        if (!marked[startDateString]) {
+          marked[startDateString] = {
+            hasBlueDot: false,
+            hasRedDot: false,
+          };
+        }
+
+        // Mark that this day has a blue dot
+        marked[startDateString].hasBlueDot = true;
       }
     });
 
@@ -90,6 +184,81 @@ export default function Calendar({
     setDate(day.dateString);
   };
 
+  // Custom day component to render overlapping dots
+  const renderDayComponent = (day: any) => {
+    const dateStr = day.date?.dateString;
+    const marking = dateStr ? markedDates[dateStr] : null;
+    const isSelected = marking?.selected;
+    const isToday = dateStr === today;
+    const isDisabled = day.state === "disabled";
+    const hasBlueDot = marking?.hasBlueDot;
+    const hasRedDot = marking?.hasRedDot;
+
+    return (
+      <Pressable
+        onPress={() => {
+          if (!isDisabled && day.date) {
+            handleDayPress(day.date);
+          }
+        }}
+        style={[
+          styles.dayContainer,
+          isSelected && {
+            backgroundColor: theme.colors.primary,
+            borderRadius: 16,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.dayText,
+            {
+              color: isSelected
+                ? theme.colors.primaryForeground
+                : isToday
+                ? theme.colors.primary
+                : isDisabled
+                ? theme.colors.mutedForeground
+                : theme.colors.foreground,
+              fontWeight: isToday && !isSelected ? "600" : "400",
+            },
+          ]}
+        >
+          {day.date?.day}
+        </Text>
+        {(hasBlueDot || hasRedDot) && (
+          <View style={styles.dotsContainer}>
+            {hasBlueDot && (
+              <View
+                style={[
+                  styles.dot,
+                  {
+                    backgroundColor: isSelected
+                      ? theme.colors.primaryForeground
+                      : theme.colors.primary,
+                  },
+                ]}
+              />
+            )}
+            {hasRedDot && (
+              <View
+                style={[
+                  styles.dot,
+                  styles.redDot,
+                  {
+                    backgroundColor: isSelected
+                      ? theme.colors.primaryForeground
+                      : "#ef4444",
+                  },
+                ]}
+              />
+            )}
+          </View>
+        )}
+      </Pressable>
+    );
+  };
+
   return (
     <Card style={styles.card}>
       <CardContent style={styles.cardContent}>
@@ -97,6 +266,7 @@ export default function Calendar({
           current={date}
           onDayPress={handleDayPress}
           markedDates={markedDates}
+          dayComponent={renderDayComponent}
           theme={{
             backgroundColor: "transparent",
             calendarBackground: "transparent",
@@ -140,8 +310,9 @@ export default function Calendar({
         <ScrollView style={styles.eventsContainer}>
           {dayEvents.length > 0 ? (
             dayEvents.map((event) => (
-              <View
+              <Pressable
                 key={event.title}
+                onPress={() => onEventPress?.(event)}
                 style={[
                   styles.eventItem,
                   { backgroundColor: theme.colors.muted },
@@ -168,10 +339,10 @@ export default function Calendar({
                       { color: theme.colors.mutedForeground },
                     ]}
                   >
-                    {formatDateRange(new Date(event.from), new Date(event.to))}
+                    {formatEventTimeDisplay(event)}
                   </Text>
                 </View>
-              </View>
+              </Pressable>
             ))
           ) : (
             <Text
@@ -254,5 +425,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     paddingVertical: 16,
+  },
+  dayContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    minHeight: 40,
+    width: "100%",
+  },
+  dayText: {
+    fontSize: 14,
+    fontWeight: "400",
+  },
+  dotsContainer: {
+    position: "absolute",
+    bottom: 4,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+  redDot: {
+    marginLeft: -2,
   },
 });
