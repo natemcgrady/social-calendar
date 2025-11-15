@@ -61,3 +61,12 @@ export function isAllDayEvent(from: string, to: string): boolean {
   const toTimeStr = format(toDate, "HH:mm");
   return fromTimeStr === "00:00" && toTimeStr === "23:59";
 }
+
+export function getNextClosestHour(date: Date = new Date()): Date {
+  const nextHour = new Date(date);
+  nextHour.setHours(nextHour.getHours() + 1);
+  nextHour.setMinutes(0);
+  nextHour.setSeconds(0);
+  nextHour.setMilliseconds(0);
+  return nextHour;
+}

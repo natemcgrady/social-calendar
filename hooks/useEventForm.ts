@@ -4,6 +4,7 @@ import {
   adjustEndTimeIfNeeded,
   isAllDayEvent,
   parseDateString,
+  getNextClosestHour,
 } from "../utils/eventFormUtils";
 
 interface EventFormData {
@@ -30,17 +31,15 @@ export function useEventForm({
   const [endDate, setEndDate] = useState<Date | undefined>(
     initialDate ? parseDateString(initialDate) : undefined
   );
-  const [fromTime, setFromTime] = useState<Date>(new Date());
+  const [fromTime, setFromTime] = useState<Date>(getNextClosestHour());
   const [toTime, setToTime] = useState<Date>(() => {
-    const defaultToTime = new Date();
-    defaultToTime.setHours(defaultToTime.getHours() + 1);
-    return defaultToTime;
+    const defaultFromTime = getNextClosestHour();
+    return getNextClosestHour(defaultFromTime);
   });
-  const [tempFromTime, setTempFromTime] = useState<Date>(new Date());
+  const [tempFromTime, setTempFromTime] = useState<Date>(getNextClosestHour());
   const [tempToTime, setTempToTime] = useState<Date>(() => {
-    const defaultToTime = new Date();
-    defaultToTime.setHours(defaultToTime.getHours() + 1);
-    return defaultToTime;
+    const defaultFromTime = getNextClosestHour();
+    return getNextClosestHour(defaultFromTime);
   });
   const [isAllDay, setIsAllDay] = useState(false);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -82,9 +81,8 @@ export function useEventForm({
         setStartDate(date);
         setEndDate(date);
         if (isInitialMount.current) {
-          const defaultFromTime = new Date();
-          const defaultToTime = new Date();
-          defaultToTime.setHours(defaultToTime.getHours() + 1);
+          const defaultFromTime = getNextClosestHour();
+          const defaultToTime = getNextClosestHour(defaultFromTime);
           setFromTime(defaultFromTime);
           setToTime(defaultToTime);
           isInitialMount.current = false;
@@ -94,9 +92,8 @@ export function useEventForm({
         setStartDate(now);
         setEndDate(now);
         if (isInitialMount.current) {
-          const defaultFromTime = new Date();
-          const defaultToTime = new Date();
-          defaultToTime.setHours(defaultToTime.getHours() + 1);
+          const defaultFromTime = getNextClosestHour();
+          const defaultToTime = getNextClosestHour(defaultFromTime);
           setFromTime(defaultFromTime);
           setToTime(defaultToTime);
           isInitialMount.current = false;
@@ -177,10 +174,9 @@ export function useEventForm({
     setStartDate(undefined);
     setEndDate(undefined);
     setIsAllDay(false);
-    const resetFromTime = new Date();
+    const resetFromTime = getNextClosestHour();
+    const resetToTime = getNextClosestHour(resetFromTime);
     setFromTime(resetFromTime);
-    const resetToTime = new Date();
-    resetToTime.setHours(resetToTime.getHours() + 1);
     setToTime(resetToTime);
     setShowStartDatePicker(false);
     setShowEndDatePicker(false);
