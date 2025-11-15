@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import { StyleSheet, ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -11,8 +11,12 @@ import Calendar from "../../components/ui/calendar";
 import { Theme } from "../../constants/theme";
 import { AddEventModal } from "../../components/AddEventModal";
 import { ViewEventModal } from "../../components/ViewEventModal";
-import { SettingsMenu } from "../../components/SettingsMenu";
-import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "../../components/ui/dropdown-menu";
+import { DeleteCalendarConfirmationDialog } from "../../components/DeleteCalendarConfirmationDialog";
 import { Event } from "../../components/ui/calendar";
 import eventsData from "../../db/events.json";
 
@@ -43,6 +47,7 @@ export default function CalendarDetail() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
+  const settingsButtonRef = useRef<View>(null);
 
   const calendar = calendars.find((cal) => cal.id === calendarId);
   const calendarTitle = calendar?.title || "Calendar";
@@ -133,18 +138,44 @@ export default function CalendarDetail() {
           />
         </Button>
         <Text style={styles.headerTitle}>{calendarTitle}</Text>
-        <Button
-          variant="ghost"
-          size="icon"
-          onPress={() => setIsSettingsMenuVisible(true)}
-          style={styles.addButton}
+        <View
+          ref={settingsButtonRef}
+          collapsable={false}
+          style={{ width: 40, height: 40 }}
         >
-          <Ionicons
-            name="ellipsis-vertical"
-            size={24}
-            color={theme.colors.foreground}
-          />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onPress={() => {
+              console.log("Button pressed, setting menu visible");
+              setIsSettingsMenuVisible(true);
+            }}
+            style={styles.addButton}
+          >
+            <Ionicons
+              name="ellipsis-vertical"
+              size={24}
+              color={theme.colors.foreground}
+            />
+          </Button>
+        </View>
+        <DropdownMenu
+          open={isSettingsMenuVisible}
+          onOpenChange={setIsSettingsMenuVisible}
+          triggerRef={settingsButtonRef}
+          align="end"
+          side="bottom"
+        >
+          <DropdownMenuItem
+            variant="destructive"
+            onSelect={() => {
+              setIsSettingsMenuVisible(false);
+              setIsDeleteDialogVisible(true);
+            }}
+          >
+            Delete Calendar
+          </DropdownMenuItem>
+        </DropdownMenu>
       </View>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -177,13 +208,7 @@ export default function CalendarDetail() {
         calendarTitle={calendarTitle}
         createdBy="You"
       />
-      <SettingsMenu
-        open={isSettingsMenuVisible}
-        onClose={() => setIsSettingsMenuVisible(false)}
-        onDeletePress={() => setIsDeleteDialogVisible(true)}
-        calendarTitle={calendarTitle}
-      />
-      <DeleteConfirmationDialog
+      <DeleteCalendarConfirmationDialog
         open={isDeleteDialogVisible}
         onClose={() => setIsDeleteDialogVisible(false)}
         onConfirm={handleDeleteCalendar}

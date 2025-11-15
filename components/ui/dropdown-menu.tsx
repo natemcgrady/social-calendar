@@ -22,6 +22,7 @@ interface DropdownMenuProps {
   triggerRef?: React.RefObject<View>;
   align?: "start" | "center" | "end";
   side?: "top" | "bottom";
+  contentStyle?: StyleProp<ViewStyle>;
 }
 
 function DropdownMenu({
@@ -31,6 +32,7 @@ function DropdownMenu({
   triggerRef,
   align = "end",
   side = "bottom",
+  contentStyle,
 }: DropdownMenuProps) {
   const [triggerLayout, setTriggerLayout] = useState<{
     x: number;
@@ -66,6 +68,7 @@ function DropdownMenu({
       align={align}
       side={side}
       onOpenChange={onOpenChange}
+      style={contentStyle}
     >
       {children}
     </DropdownMenuContent>
@@ -133,7 +136,12 @@ function DropdownMenuContent({
       : triggerLayout.y - menuHeight - spacing;
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+    <Modal
+      visible={true}
+      transparent={true}
+      animationType="none"
+      onRequestClose={() => onOpenChange(false)}
+    >
       <Pressable
         style={StyleSheet.absoluteFill}
         onPress={() => onOpenChange(false)}
@@ -162,7 +170,7 @@ function DropdownMenuContent({
       >
         <View pointerEvents="auto">{children}</View>
       </Animated.View>
-    </View>
+    </Modal>
   );
 }
 
@@ -183,6 +191,7 @@ interface DropdownMenuItemProps {
   onSelect?: () => void;
   variant?: "default" | "destructive";
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 function DropdownMenuItem({
@@ -190,6 +199,7 @@ function DropdownMenuItem({
   onSelect,
   variant = "default",
   style,
+  textStyle,
 }: DropdownMenuItemProps) {
   const { theme } = useTheme();
 
@@ -221,6 +231,7 @@ function DropdownMenuItem({
                 ? theme.colors.destructive || "#ef4444"
                 : theme.colors.foreground,
           },
+          textStyle,
         ]}
       >
         {children}
