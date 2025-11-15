@@ -82,7 +82,8 @@ export default function CalendarDetail() {
   const [isViewEventModalVisible, setIsViewEventModalVisible] = useState(false);
   const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
-  const [isDeleteEventDialogVisible, setIsDeleteEventDialogVisible] = useState(false);
+  const [isDeleteEventDialogVisible, setIsDeleteEventDialogVisible] =
+    useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
@@ -257,9 +258,6 @@ const createStyles = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "space-between",
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
     },
     backButton: {
       width: 40,
@@ -276,7 +274,6 @@ const createStyles = (theme: Theme) =>
     },
     scrollContent: {
       flexGrow: 1,
-      padding: theme.spacing.lg,
       alignItems: "center",
     },
   });

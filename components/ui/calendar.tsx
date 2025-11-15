@@ -267,6 +267,7 @@ export default function Calendar({
           onDayPress={handleDayPress}
           markedDates={markedDates}
           dayComponent={renderDayComponent}
+          style={styles.calendar}
           theme={{
             backgroundColor: "transparent",
             calendarBackground: "transparent",
@@ -363,11 +364,17 @@ export default function Calendar({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    maxWidth: 400,
-    paddingVertical: 16,
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   cardContent: {
-    paddingHorizontal: 16,
+    width: "100%",
+    padding: 0,
+  },
+  calendar: {
+    width: "100%",
   },
   cardFooter: {
     paddingTop: 16,

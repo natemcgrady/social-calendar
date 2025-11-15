@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { format } from "date-fns";
@@ -6,7 +6,11 @@ import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "./ui/button";
 import { Event } from "./ui/calendar";
 import { Ionicons } from "@expo/vector-icons";
-import { EventActionsMenu } from "./EventActionsMenu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu";
 
 interface ViewEventModalProps {
   visible: boolean;
@@ -28,7 +32,8 @@ export function ViewEventModal({
   createdBy,
 }: ViewEventModalProps) {
   const { theme } = useTheme();
-  const [isActionsMenuVisible, setIsActionsMenuVisible] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const triggerRef = useRef<View>(null);
 
   if (!event) return null;
 
@@ -143,17 +148,19 @@ export function ViewEventModal({
                   color={theme.colors.foreground}
                 />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onPress={() => setIsActionsMenuVisible(true)}
-              >
-                <Ionicons
-                  name="ellipsis-horizontal"
-                  size={20}
-                  color={theme.colors.foreground}
-                />
-              </Button>
+              <View ref={triggerRef} collapsable={false}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onPress={() => setIsDropdownOpen(true)}
+                >
+                  <Ionicons
+                    name="ellipsis-vertical"
+                    size={20}
+                    color={theme.colors.foreground}
+                  />
+                </Button>
+              </View>
             </View>
           </View>
           <ScrollView
@@ -202,15 +209,27 @@ export function ViewEventModal({
               </View>
             )}
           </ScrollView>
+          {onDelete && (
+            <DropdownMenu
+              open={isDropdownOpen}
+              onOpenChange={setIsDropdownOpen}
+              triggerRef={triggerRef}
+              align="end"
+              side="bottom"
+            >
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={() => {
+                  setIsDropdownOpen(false);
+                  handleDeletePress();
+                }}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenu>
+          )}
         </SafeAreaView>
       </Modal>
-      {onDelete && (
-        <EventActionsMenu
-          open={isActionsMenuVisible}
-          onClose={() => setIsActionsMenuVisible(false)}
-          onDeletePress={handleDeletePress}
-        />
-      )}
     </>
   );
 }
