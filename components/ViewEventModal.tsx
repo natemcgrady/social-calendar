@@ -67,8 +67,6 @@ export function ViewEventModal({
       justifyContent: "space-between",
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
     },
     headerLeft: {
       flexDirection: "row",

@@ -11,7 +11,6 @@ interface DatePickerModalProps {
   selectedDate: Date | undefined;
   onDateSelect: (date: Date) => void;
   onClose: () => void;
-  title?: string;
 }
 
 export function DatePickerModal({
@@ -19,7 +18,6 @@ export function DatePickerModal({
   selectedDate,
   onDateSelect,
   onClose,
-  title = "Select Date",
 }: DatePickerModalProps) {
   const { theme } = useTheme();
 
@@ -39,61 +37,23 @@ export function DatePickerModal({
       marginTop: theme.spacing.lg,
       marginBottom: theme.spacing.md,
       borderRadius: theme.radius.xl,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.card,
+      borderWidth: 0,
+      backgroundColor: "transparent",
       overflow: "hidden",
-      shadowColor: "#000",
+      shadowColor: "transparent",
       shadowOffset: {
         width: 0,
-        height: 2,
+        height: 0,
       },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 4,
-    },
-    datePickerHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
-      backgroundColor: theme.colors.muted,
-    },
-    datePickerTitle: {
-      fontSize: 15,
-      fontWeight: "600",
-      letterSpacing: 0.1,
-    },
-    datePickerCloseButton: {
-      padding: theme.spacing.xs,
-      borderRadius: theme.radius.md,
-    },
-    calendarContainer: {
-      paddingVertical: theme.spacing.lg,
-      paddingHorizontal: theme.spacing.sm,
+      shadowOpacity: 0,
+      shadowRadius: 0,
+      elevation: 0,
     },
   });
 
   return (
     <Card style={styles.datePickerContainer}>
-      <View style={styles.datePickerHeader}>
-        <Text
-          style={[styles.datePickerTitle, { color: theme.colors.foreground }]}
-        >
-          {title}
-        </Text>
-        <Pressable onPress={onClose} style={styles.datePickerCloseButton}>
-          <Ionicons
-            name="close"
-            size={20}
-            color={theme.colors.mutedForeground}
-          />
-        </Pressable>
-      </View>
-      <CardContent style={styles.calendarContainer}>
+      <CardContent>
         <RNCalendar
           current={dateString || today}
           onDayPress={handleDateSelect}

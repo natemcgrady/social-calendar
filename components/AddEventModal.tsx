@@ -69,8 +69,6 @@ export function AddEventModal({
       justifyContent: "space-between",
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
     },
     headerLeft: {
       flexDirection: "row",
@@ -150,7 +148,6 @@ export function AddEventModal({
               onChangeText={form.setTitle}
               autoFocus={!eventToEdit}
             />
-
             <View style={styles.dateTimeContainer}>
               <AllDayToggle
                 value={form.isAllDay}

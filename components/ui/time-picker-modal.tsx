@@ -45,7 +45,7 @@ export function TimePickerModal({
       marginBottom: theme.spacing.md,
       borderRadius: theme.radius.xl,
       borderWidth: 0,
-      backgroundColor: "red",
+      backgroundColor: "transparent",
       shadowColor: "transparent",
       shadowOffset: {
         width: 0,
@@ -58,19 +58,31 @@ export function TimePickerModal({
     timePickerWrapper: {
       overflow: "hidden",
     },
+    cardContent: {
+      padding: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pickerContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+    },
   });
 
   return (
     <View style={styles.timePickerWrapper}>
       <Card style={styles.timePickerContainer}>
-        <CardContent>
-          <DateTimePicker
-            value={value}
-            mode="time"
-            is24Hour={false}
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={handleTimeChange}
-          />
+        <CardContent style={styles.cardContent}>
+          <View style={styles.pickerContainer}>
+            <DateTimePicker
+              value={value}
+              mode="time"
+              is24Hour={false}
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={handleTimeChange}
+            />
+          </View>
         </CardContent>
       </Card>
     </View>
