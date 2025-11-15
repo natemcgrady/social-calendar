@@ -13,61 +13,19 @@ import { AddEventModal } from "../../components/AddEventModal";
 import { ViewEventModal } from "../../components/ViewEventModal";
 import { SettingsMenu } from "../../components/SettingsMenu";
 import { DeleteConfirmationDialog } from "../../components/DeleteConfirmationDialog";
-import { DeleteEventConfirmationDialog } from "../../components/DeleteEventConfirmationDialog";
 import { Event } from "../../components/ui/calendar";
+import eventsData from "../../db/events.json";
 
-// Mock data - this would be fetched from DB based on calendar ID
+// Convert string keys to numbers for type compatibility
 const calendarEvents: Record<
   number,
   Array<{ title: string; from: string; to: string }>
-> = {
-  1: [
-    {
-      title: "Family Dinner",
-      from: "2025-11-11T18:00:00",
-      to: "2025-11-11T20:00:00",
-    },
-    {
-      title: "Birthday Party",
-      from: "2025-11-15T14:00:00",
-      to: "2025-11-15T17:00:00",
-    },
-    {
-      title: "Thanksgiving",
-      from: "2025-11-27T12:00:00",
-      to: "2025-11-27T18:00:00",
-    },
-  ],
-  2: [
-    {
-      title: "Coffee with Friends",
-      from: "2025-11-11T10:00:00",
-      to: "2025-11-11T11:00:00",
-    },
-    {
-      title: "Game Night",
-      from: "2025-11-14T19:00:00",
-      to: "2025-11-14T22:00:00",
-    },
-  ],
-  3: [
-    {
-      title: "Team Sync Meeting",
-      from: "2025-11-11T09:00:00",
-      to: "2025-11-11T10:00:00",
-    },
-    {
-      title: "Design Review",
-      from: "2025-11-12T11:30:00",
-      to: "2025-11-12T12:30:00",
-    },
-    {
-      title: "Client Presentation",
-      from: "2025-11-13T14:00:00",
-      to: "2025-11-13T15:00:00",
-    },
-  ],
-};
+> = Object.fromEntries(
+  Object.entries(eventsData.calendarEvents).map(([key, value]) => [
+    parseInt(key, 10),
+    value,
+  ])
+) as Record<number, Array<{ title: string; from: string; to: string }>>;
 
 export default function CalendarDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -82,8 +40,6 @@ export default function CalendarDetail() {
   const [isViewEventModalVisible, setIsViewEventModalVisible] = useState(false);
   const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
-  const [isDeleteEventDialogVisible, setIsDeleteEventDialogVisible] =
-    useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
@@ -161,10 +117,6 @@ export default function CalendarDetail() {
     }
   };
 
-  const handleDeleteEventPress = () => {
-    setIsDeleteEventDialogVisible(true);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.header]}>
@@ -221,15 +173,9 @@ export default function CalendarDetail() {
         }}
         event={selectedEvent}
         onEdit={handleEditEvent}
-        onDelete={handleDeleteEventPress}
+        onDelete={handleDeleteEvent}
         calendarTitle={calendarTitle}
         createdBy="You"
-      />
-      <DeleteEventConfirmationDialog
-        open={isDeleteEventDialogVisible}
-        onClose={() => setIsDeleteEventDialogVisible(false)}
-        onConfirm={handleDeleteEvent}
-        eventTitle={selectedEvent?.title || ""}
       />
       <SettingsMenu
         open={isSettingsMenuVisible}

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
+import { DeleteEventConfirmationDialog } from "./DeleteEventConfirmationDialog";
 
 interface ViewEventModalProps {
   visible: boolean;
@@ -33,6 +34,7 @@ export function ViewEventModal({
 }: ViewEventModalProps) {
   const { theme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const triggerRef = useRef<View>(null);
 
   if (!event) return null;
@@ -112,6 +114,10 @@ export function ViewEventModal({
   });
 
   const handleDeletePress = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
     if (onDelete) {
       onDelete();
       onClose();
@@ -227,6 +233,15 @@ export function ViewEventModal({
                 Delete
               </DropdownMenuItem>
             </DropdownMenu>
+          )}
+          {onDelete && event && (
+            <DeleteEventConfirmationDialog
+              open={isDeleteDialogOpen}
+              onClose={() => setIsDeleteDialogOpen(false)}
+              onConfirm={handleConfirmDelete}
+              eventTitle={event.title}
+              asOverlay={true}
+            />
           )}
         </SafeAreaView>
       </Modal>

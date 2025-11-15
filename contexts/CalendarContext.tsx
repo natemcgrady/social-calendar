@@ -4,6 +4,7 @@ import React, {
   ReactNode,
   useState,
 } from "react";
+import calendarsData from "../db/calendars.json";
 
 export interface Calendar {
   id: number;
@@ -25,11 +26,9 @@ interface CalendarProviderProps {
 }
 
 export function CalendarProvider({ children }: CalendarProviderProps) {
-  const [calendars, setCalendars] = useState<Calendar[]>([
-    { id: 1, title: "Family" },
-    { id: 2, title: "Friends" },
-    { id: 3, title: "Work" },
-  ]);
+  const [calendars, setCalendars] = useState<Calendar[]>(
+    calendarsData.calendars as Calendar[]
+  );
 
   const addCalendar = (calendar: Calendar) => {
     setCalendars((prev) => [...prev, calendar]);

@@ -1,0 +1,16 @@
+{
+  "members": [
+    {
+      "id": 1,
+      "name": "Nate McGrady",
+      "avatarUrl": "../assets/avatar.png",
+      "calendarIds": [1, 2, 3]
+    },
+    {
+      "id": 2,
+      "name": "Amelia McGrady",
+      "avatarUrl": "../assets/mel.jpg",
+      "calendarIds": [1]
+    }
+  ]
+}

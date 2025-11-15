@@ -39,6 +39,7 @@ export default function Home() {
               key={calendar.id}
               style={styles.calendarCard}
               title={calendar.title}
+              calendarId={calendar.id}
               onPress={() => router.push(`/calendar/${calendar.id}`)}
             />
           ))

@@ -18,6 +18,7 @@ interface DeleteEventConfirmationDialogProps {
   onClose: () => void;
   onConfirm: () => void;
   eventTitle: string;
+  asOverlay?: boolean; // If true, renders as View overlay instead of Modal
 }
 
 export function DeleteEventConfirmationDialog({
@@ -25,6 +26,7 @@ export function DeleteEventConfirmationDialog({
   onClose,
   onConfirm,
   eventTitle,
+  asOverlay = false,
 }: DeleteEventConfirmationDialogProps) {
   const { theme } = useTheme();
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -50,6 +52,97 @@ export function DeleteEventConfirmationDialog({
     onClose();
   };
 
+  const content = (
+    <View style={asOverlay ? styles.overlayContainer : styles.container}>
+      {/* Overlay */}
+      <Animated.View
+        style={[
+          styles.overlay,
+          {
+            opacity: overlayOpacity,
+          },
+        ]}
+      >
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+        />
+      </Animated.View>
+
+      {/* Bottom Sheet */}
+      <Animated.View
+        style={[
+          styles.bottomSheet,
+          {
+            backgroundColor: theme.colors.card,
+            borderTopLeftRadius: theme.radius.lg,
+            borderTopRightRadius: theme.radius.lg,
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
+        <SafeAreaView edges={["bottom"]} style={styles.sheetContent}>
+          {/* Question Text */}
+          <View style={styles.questionContainer}>
+            <Text style={[styles.questionText, { color: theme.colors.foreground }]}>
+              Are you sure you want to delete this event?
+            </Text>
+          </View>
+
+          {/* Buttons */}
+          <View style={styles.buttonContainer}>
+            <Pressable
+              onPress={handleConfirm}
+              style={({ pressed }) => [
+                styles.deleteButton,
+                {
+                  backgroundColor: pressed
+                    ? theme.colors.destructive + "20"
+                    : "transparent",
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.deleteButtonText,
+                  { color: theme.colors.destructive || "#ef4444" },
+                ]}
+              >
+                Delete event
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [
+                styles.cancelButton,
+                {
+                  backgroundColor: pressed
+                    ? theme.colors.muted
+                    : "transparent",
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cancelButtonText,
+                  { color: theme.colors.primary || "#3b82f6" },
+                ]}
+              >
+                Cancel
+              </Text>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </Animated.View>
+    </View>
+  );
+
+  if (asOverlay) {
+    if (!open) return null;
+    return content;
+  }
+
   if (!open) return null;
 
   return (
@@ -59,89 +152,7 @@ export function DeleteEventConfirmationDialog({
       animationType="none"
       onRequestClose={onClose}
     >
-      <View style={styles.container}>
-        {/* Overlay */}
-        <Animated.View
-          style={[
-            styles.overlay,
-            {
-              opacity: overlayOpacity,
-            },
-          ]}
-        >
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={onClose}
-          />
-        </Animated.View>
-
-        {/* Bottom Sheet */}
-        <Animated.View
-          style={[
-            styles.bottomSheet,
-            {
-              backgroundColor: theme.colors.card,
-              borderTopLeftRadius: theme.radius.lg,
-              borderTopRightRadius: theme.radius.lg,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
-          <SafeAreaView edges={["bottom"]} style={styles.sheetContent}>
-            {/* Question Text */}
-            <View style={styles.questionContainer}>
-              <Text style={[styles.questionText, { color: theme.colors.foreground }]}>
-                Are you sure you want to delete this event?
-              </Text>
-            </View>
-
-            {/* Buttons */}
-            <View style={styles.buttonContainer}>
-              <Pressable
-                onPress={handleConfirm}
-                style={({ pressed }) => [
-                  styles.deleteButton,
-                  {
-                    backgroundColor: pressed
-                      ? theme.colors.destructive + "20"
-                      : "transparent",
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.deleteButtonText,
-                    { color: theme.colors.destructive || "#ef4444" },
-                  ]}
-                >
-                  Delete event
-                </Text>
-              </Pressable>
-
-              <Pressable
-                onPress={onClose}
-                style={({ pressed }) => [
-                  styles.cancelButton,
-                  {
-                    backgroundColor: pressed
-                      ? theme.colors.muted
-                      : "transparent",
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.cancelButtonText,
-                    { color: theme.colors.primary || "#3b82f6" },
-                  ]}
-                >
-                  Cancel
-                </Text>
-              </Pressable>
-            </View>
-          </SafeAreaView>
-        </Animated.View>
-      </View>
+      {content}
     </Modal>
   );
 }
@@ -149,6 +160,11 @@ export function DeleteEventConfirmationDialog({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  overlayContainer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 10000,
+    elevation: 10000,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
