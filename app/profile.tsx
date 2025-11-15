@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { StyleSheet, ScrollView, View, Text } from "react-native";
+import { StyleSheet, ScrollView, View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -68,7 +68,13 @@ export default function Profile() {
         </View>
 
         <View style={styles.statsSection}>
-          <View style={styles.statCard}>
+          <Pressable
+            onPress={() => router.push("/friends")}
+            style={({ pressed }) => [
+              styles.statCard,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
             <Text
               style={[styles.statValue, { color: theme.colors.foreground }]}
             >
@@ -79,7 +85,7 @@ export default function Profile() {
             >
               Friends
             </Text>
-          </View>
+          </Pressable>
           <View style={styles.statCard}>
             <Text
               style={[styles.statValue, { color: theme.colors.foreground }]}

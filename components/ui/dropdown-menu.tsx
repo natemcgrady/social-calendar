@@ -115,8 +115,9 @@ function DropdownMenuContent({
 
   if (!triggerLayout) return null;
 
-  // Calculate position
-  const menuWidth = 160;
+  // Extract width from style prop if provided, otherwise use default
+  const styleObj = StyleSheet.flatten(style);
+  const menuWidth = (styleObj?.minWidth as number) || (styleObj?.width as number) || 160;
   const menuHeight = 50; // Approximate height for single item
   const spacing = 4;
 
